@@ -20,7 +20,36 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
+
+
 module ChaCha20_System(
 
+input logic clk, rst,
+   //inputs that are needed to form the chacha matrix
+   //8, 32-bit words     (256) bit
+   input word_t [0:7] Key,
+   //3, 32-bit words     (96) bit
+   input word_t [2:0] Nonce,
+
+   //4, 32-bit words     (128) bit
+   input word_t [3:0] Constant
+
+//note how there is no block on the input here as it is an internal sig in this module
     );
+    
+    //appropriate block counter signals, need to keep track of the block itself, how many blocks and if a block is ready to be outputed
+    word_t Block;
+    logic [4-1:0] blocksproduced;
+    logic blockready;
+    
+    //Matrix that goes into serializer and then Xor module
+    word_t MatrixOut [3:0][3:0];
+    
+    
+    
+ Block_Function BF (.clk(clk), .rst(rst), .blockready(blockready), .Key(Key), .Nonce(Nonce), .Constant(Constant), .Block(Block), .MatrixOut(MatrixOut), .blocksproduced(blocksproduced));   
+ Block_Counter BC (.clk(clk), .init(rst) , .blocksproduced(blocksproduced), . Block(Block));
+    
+    
+    
 endmodule

@@ -19,14 +19,16 @@
 //// 
 ////////////////////////////////////////////////////////////////////////////////////
 
-//typedef logic [31:0] word_t;
-
+  
 //perform all necessary Q rounds, track which Q round we need to perform, add initial chacha matrix to finished one and then output
 module PerformQround
 (
     input  word_t chachamatrixIN[3:0][3:0],
     input  logic  clk, setRounds,
-    output word_t chachamatrixOUT[3:0][3:0]
+    output word_t chachamatrixOUT[3:0][3:0],
+    
+    output logic blockready,
+    output logic [3:0] blocksproduced // can change this to a paramaterised type at some point to speciufy how many blocks are expected to be produced
 );
     //intermediate value held for calculations and initial value held for adding at the end
     word_t INITchachastate [3:0][3:0];
@@ -53,16 +55,18 @@ module PerformQround
             CurrQ <= Q0;
             counter <= 0;
             loadvalues <= 1;
-
+          
         end  
         else begin      
             Currstep <= Nextstep;
             if(CurrQ == Q7) begin
                 counter <= counter + 1;
                 loadvalues <= 1;
+                
             end
             else if(counter == 20) begin
                 counter <= 0;
+                blocksproduced = blocksproduced + 1;
             end
         end 
     end
@@ -78,7 +82,7 @@ module PerformQround
             case (Currstep) 
                 S0: begin
                     a <= a + b;
-                    // d <= d^(a+b); //look at this line again
+                    d <= d^(a+b); 
                 end
                 
                 S1: begin
@@ -318,11 +322,13 @@ module PerformQround
             for (int x = 0; x < 4; x++) begin
                 for (int y = 0; y < 4; y++) begin
                     chachamatrixOUT[x][y] = INITchachastate[x][y] + TEMPpchachastate[x][y];
+                    blockready = 1;
                 end
             end
         end
         else begin
             chachamatrixOUT = '{default:0};
+            blockready = 0;
         end 
     end
     

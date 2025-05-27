@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 05/24/2025 04:25:28 PM
+// Create Date: 05/27/2025 11:19:55 AM
 // Design Name: 
-// Module Name: Block_Counter
+// Module Name: CipherText
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -19,29 +19,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-typedef logic [31:0] word_t;
 
-module Block_Counter 
-
-(
-input logic clk, init,
-input logic [4-1:0] blocksproduced,
-output  word_t Block
-
+module CipherText(
 
     );
-    
- always_ff @(posedge clk) begin
-  if (init) begin
-   Block <= '{default:0};
-   end
-  else begin
-   Block <= Block + blocksproduced;
-   end
-   
-   end
-   
-  
-  
-    
 endmodule
