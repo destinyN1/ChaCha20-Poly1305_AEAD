@@ -20,7 +20,11 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module Concatenator(
+//module Concatenator(
 
-    );
-endmodule
+//input logic chip_enable, clk, rst
+
+//output logic
+
+//    );
+//endmodule
