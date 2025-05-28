@@ -22,7 +22,7 @@
 
 module Block_Function(
 
-input logic rst, clk, blockready,
+input logic rst, clk,
 
 
    //inputs that are needed to form the chacha matrix
@@ -40,7 +40,11 @@ input logic rst, clk, blockready,
    output word_t MatrixOut [3:0][3:0],
    
    //goes to block counter
-   output logic [4-1:0] blocksproduced
+   output logic [4-1:0] blocksproduced,
+   
+   output  logic serial_enable
+   
+
 
 );
 
@@ -51,6 +55,8 @@ States CS,NS;
  
  logic clrMatrix, Setrounds;
  
+ logic blockready;
+ 
  
  
  //Reset both modules in the block function using single reset pin
@@ -59,15 +65,19 @@ States CS,NS;
 
 //add a note here: this could posssibly introduce some timing issues here so I will write this here for now.
   if (rst) begin
-  CS = INIT;
+  blocksproduced <= 0;
+  CS <= INIT;
   end
   
   else begin
-   CS <= NS;  
+   CS <= NS;
+  if(serial_enable) begin
+    blocksproduced <= blocksproduced + 1;
    
  end
-end
-
+ end
+ end
+ 
 
 
 //State logic for stepping through the block funtions actions
@@ -78,7 +88,7 @@ NS = CS;
 
 case (CS) 
  INIT: begin
- 
+    
     clrMatrix = 1;
     Setrounds = 1;
     NS = MLOW;
@@ -95,22 +105,24 @@ end
  Setrounds = 0;
  
   if (blockready == 1) begin
-    
+    serial_enable = 1;
     NS = INIT;
   end
   
   else begin
-    
+    serial_enable = 0;
     NS = SETLOW;
+    
  
  end
 end
 endcase
 
 
+
 end
 
-PerformQround Qround(.chachamatrixIN(chachatoQround), .clk(clk), .setRounds(Setrounds), .chachamatrixOUT(MatrixOut), .blocksproduced(blocksproduced) );
+PerformQround Qround(.chachamatrixIN(chachatoQround), .clk(clk), .setRounds(Setrounds), .chachamatrixOUT(MatrixOut), .blocksproduced(blocksproduced), .blockready(blockready) );
 ChaChaState state(.clk(clk), .clrMatrix(clrMatrix) ,.Block(Block), .Key(Key) ,.Nonce(Nonce),.Constant(Constant), .chachatoQround(chachatoQround));
 endmodule
 

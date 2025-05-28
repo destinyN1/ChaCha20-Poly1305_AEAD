@@ -43,13 +43,17 @@ input logic clk, rst,
     logic blockready;
     
     //Matrix that goes into serializer and then Xor module
-    word_t MatrixOut [3:0][3:0];
+    word_t MatrixOutBF [3:0][3:0];
     
+    //Serialiser Signals
+    word_t SerialOut;
+    logic  validS;
+    logic load_enable;
+;
     
-    
- Block_Function BF (.clk(clk), .rst(rst), .blockready(blockready), .Key(Key), .Nonce(Nonce), .Constant(Constant), .Block(Block), .MatrixOut(MatrixOut), .blocksproduced(blocksproduced));   
+ Block_Function BF (.serial_enable(load_enable),.clk(clk), .rst(rst), .Key(Key), .Nonce(Nonce), .Constant(Constant), .Block(Block), .MatrixOut(MatrixOutBF), .blocksproduced(blocksproduced));   
  Block_Counter BC (.clk(clk), .init(rst) , .blocksproduced(blocksproduced), . Block(Block));
-    
+ Serialiser S (.clk(clk),.rst(rst), .indata(MatrixOutBF),.validS(validS),.outdata(SerialOut),.load_enable(load_enable));   
     
     
 endmodule
