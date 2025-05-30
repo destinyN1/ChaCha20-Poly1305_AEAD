@@ -39,7 +39,7 @@ input logic clk, rst,
     
     //appropriate block counter signals, need to keep track of the block itself, how many blocks and if a block is ready to be outputed
     word_t Block;
-    logic [4-1:0] blocksproduced;
+    logic [31:0] blocksproduced;
     logic blockready;
     
     //Matrix that goes into serializer and then Xor module

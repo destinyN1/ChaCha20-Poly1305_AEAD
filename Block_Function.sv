@@ -40,7 +40,7 @@ input logic rst, clk,
    output word_t MatrixOut [3:0][3:0],
    
    //goes to block counter
-   output logic [4-1:0] blocksproduced,
+   output logic [31:0] blocksproduced,
    
    output  logic serial_enable
    
