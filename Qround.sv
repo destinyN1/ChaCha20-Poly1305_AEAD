@@ -26,7 +26,7 @@
 module PerformQround
 (
     input  word_t chachamatrixIN[3:0][3:0],
-    input  logic  clk, setRounds,
+    input  logic  clk, setRounds, makeidle,
     output word_t chachamatrixOUT[3:0][3:0],
     
     output logic blockready,
@@ -39,11 +39,13 @@ module PerformQround
     word_t a, b, c, d;
     
     logic loadvalues;
+    
+    logic idle;
         
     typedef enum {Q0, Q1, Q2, Q3, Q4, Q5, Q6, Q7} Qround;
     Qround CurrQ, NextQ;
     
-    typedef enum {S0, S1, S2, S3, S4, S5, S6, S7} stepper;
+    typedef enum {IDLE,S0, S1, S2, S3, S4, S5, S6, S7} stepper;
     stepper Currstep, Nextstep;
     
     int counter;
@@ -53,10 +55,10 @@ module PerformQround
     always_ff @(posedge clk) begin
         // NextQ = CurrQ;
         if (setRounds) begin  //Required to set this at Initialisation
-            Currstep <= S0;
+            Currstep <= IDLE;
             CurrQ <= Q0;
             counter <= 0;
-            loadvalues <= 1;
+            loadvalues <= 1; // need to keep this value high while loading the matrix 
           
         end  
         else begin      
@@ -80,8 +82,19 @@ module PerformQround
         end
      
         //if right values are loaded perform the Qround
-        if(loadvalues == 0) begin
-            case (Currstep) 
+        if(loadvalues  == 0) begin
+         if (makeidle == 1) begin
+           idle <= 1;
+          end
+         else begin
+         idle <= 0;
+          
+            case (Currstep)
+                
+                IDLE: begin
+                
+                end
+                 
                 S0: begin
                     a <= a + b;
                     d <= d^(a+b); 
@@ -121,6 +134,7 @@ module PerformQround
                     loadvalues <= 1;
                 end
             endcase
+        end
         end
         else begin 
             case(CurrQ)
