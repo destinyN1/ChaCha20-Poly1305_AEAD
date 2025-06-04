@@ -8,9 +8,21 @@ module Q0_Q7_Test_TB;
     logic blockready;
     logic [3:0] blocksproduced;
     
+    
+    typedef enum {IDLE, S0, S1, S2, S3, S4, S5, S6, S7} ARXSTATE;
+    
+    logic [2:0] prev_currstep;
+    logic [2:0] prev_currq;
+    
     // Test variables
     word_t expected_matrix [3:0][3:0];
     int cycle_count;
+    
+    
+    //signal variable for the state tracker
+    logic track;
+    
+
     
     // Instantiate the module under test
     PerformQround uut (
@@ -25,313 +37,12 @@ module Q0_Q7_Test_TB;
     
     
     //Reference Values for step by step verification
-    
-        word_t ref_a, ref_b, ref_c, ref_d;
-        word_t expected_a, expected_b, expected_c, expected_d;
-        logic [2:0] current_step;
-
-
-//Reference function will perform S0-S6 (S7 is state shift) for a given Q
-     task calculate_step( 
-      input [2:0] step,
-     input word_t a_in,b_in,c_in,d_in,
-     output word_t a_out, b_out, c_out, d_out
-    
-    );
-    
-    
-     case (step)
-     
-     
-     
-        3'd0: begin // S0
-        $display("===================S0 TEST================\n");
         
-        $display("Variables (BEFORE) temp_a = %08h, d_in = %08h", a_in, d_in); 
-       $display("Variables (BEFORE) uut_a = %08h, uut_d = %08h", uut.a, uut.d); 
-       $display("\n");
-        
-        a_in = a_in + b_in;
-        d_in = d_in ^ a_in;
-        
-        // Check 'a'
-        if (uut.a !== a_in) begin
-            $display("ERROR S%0d: a mismatch! Expected uut.a =%08h, Got uut.a = %08h", 
-                     step, a_in, uut.a);
-        end
-        else begin
-            $display("PASS S%0d: a pass! Expected uut.a =%08h, Got uut.a = %08h", 
-                     step, a_in, uut.a);
-        end        
-                 
-        // Check 'd' 
-        if (uut.d !== d_in) begin
-            $display("ERROR S%0d: d mismatch! Expected uut.d =%08h, Got uut.d = %08h", 
-                     step, d_in, uut.d);
-        end
-        else begin
-            $display("PASS S%0d: d pass! Expected uut.d =%08h, Got uut.d = %08h", 
-                     step, d_in, uut.d);
-        end
-        
-        //check to see if both passed
-        if( (uut.a == a_in) && (uut.d == d_in) ) begin
-            $display("PASSED S%0d!!!", step);
-        end
-        else begin
-            $display("FAILED S%0d!!!", step);
-        end
-          $display("\n");
-          $display("=====================================\n");
-
-    end
-    
-    
-    
-        
-        
-        3'd1: begin // S1  
-                $display("===================S1 TEST================\n");
-
-        
-      $display("Variables (BEFORE) c_in = %08h, d_in = %08h", c_in, d_in); 
-       $display("Variables (BEFORE) uut_c = %08h, uut_d = %08h", uut.c, uut.d); 
-       $display("\n");
-
        
-
         
         
-            c_in = c_in + d_in;
-            d_in = {d_in[15:0], d_in[31:16]}; // ROL 16
-            
-            if (uut.c !== c_in) begin
-            $display("ERROR S%0d: a mismatch! Expected uut.c =%08h, Got uut.c = %08h", 
-                     step, c_in, uut.c);
-        end
-        else begin
-            $display("PASS S%0d: a pass! Expected uut.c =%08h, Got uut.c = %08h", 
-                     step, c_in, uut.c);
-        end        
-                 
-        // Check 'd' 
-        if (uut.d !== d_in) begin
-            $display("ERROR S%0d: d mismatch! Expected uut.d =%08h, Got uut.d = %08h", 
-                     step, d_in, uut.d);
-        end
-        else begin
-            $display("PASS S%0d: d pass! Expected uut.d =%08h, Got uut.d = %08h", 
-                     step, d_in, uut.d);
-        end
-        
-        //check to see if both passed
-        if( (uut.c == c_in) && (uut.d == d_in) ) begin
-            $display("PASSED S%0d!!!", step);
-        end
-        else begin
-            $display("FAILED S%0d!!!", step);
-        
-          $display("\n");
-          $display("=====================================\n");
-        end
-        end
-        
-        
-        3'd2: begin // S2
-            
-                 $display("===================S2 TEST================\n");
-
-        
-      $display("Variables (BEFORE) b_in = %08h, d_in = %08h", b_in, d_in); 
-       $display("Variables (BEFORE) uut_b = %08h, uut_d = %08h", uut.b, uut.d); 
-       $display("\n");
-        
-        
-            b_in = b_in ^ c_in;
-            d_in = d_in ^ a_in;
-            
-            if (uut.b !== b_in) begin
-            $display("ERROR S%0d: a mismatch! Expected uut.b =%08h, Got uut.b = %08h", 
-                     step, b_in, uut.b);
-        end
-        else begin
-            $display("PASS S%0d: a pass! Expected uut.b =%08h, Got uut.b = %08h", 
-                     step, b_in, uut.b);
-        end        
-                 
-        // Check 'd' 
-        if (uut.d !== d_in) begin
-            $display("ERROR S%0d: d mismatch! Expected uut.d =%08h, Got uut.d = %08h", 
-                     step, d_in, uut.d);
-        end
-        else begin
-            $display("PASS S%0d: d pass! Expected uut.d =%08h, Got uut.d = %08h", 
-                     step, d_in, uut.d);
-        end
-        
-        //check to see if both passed
-        if( (uut.b == b_in) && (uut.d == d_in) ) begin
-            $display("PASSED S%0d!!!", step);
-        end
-        else begin
-            $display("FAILED S%0d!!!", step);
-        
-          $display("\n");
-          $display("=====================================\n");
-        end
-        end
-        
-        
-        3'd3: begin // S3
-            b_in = {b_in[19:0], b_in[31:20]}; // ROL 12
-            d_in = {d_in[15:0], d_in[31:16]}; // ROL 16
-        end
-        
-        3'd4: begin // S4
-            a_in = a_in + b_in;
-            d_in = {d_in[23:0], d_in[31:24]}; // ROL 8
-        end
-        
-        3'd5: begin // S5
-            c_in = c_in + d_in;
-            d_in = {d_in[24:0], d_in[31:25]}; // ROL 7
-        end
-        
-        3'd6: begin // S6
-            b_in = b_in ^ c_in;
-        end
-        
-        3'd7: begin // S7 - end of quarter round
-            // No operations on a,b,c,d in S7
-        end
-    endcase
-    
-    a_out = a_in; b_out = b_in; c_out = c_in; d_out = d_in;
-endtask
-
-//TASK TO TEST S0-S6 FOR EACH Q0
-    task test_arx_ops();
-
-        word_t test_a, test_b, test_c, test_d;
-  
-        word_t step_a, step_b, step_c, step_d;
-        logic error_found;
-
-        $display("=== Testing ARX Operations Step by Step ===");
-    
-    // Initialize with known values for easier verification
-        test_a = 32'h01234567;
-         test_b = 32'h89abcdef; 
-         test_c = 32'hfedcba98;
-      test_d = 32'h76543210;
-     $display("Initial values:");
-    $display("  a=%08h, b=%08h, c=%08h, d=%08h", test_a, test_b, test_c, test_d);
-       
-    //SETUP MODULE TO PERFORM S0-S6 IN Q0   (FIRST COLUMN)    
-    setRounds = 1;
-    chachamatrixIN[0][0] = test_a;
-    chachamatrixIN[1][0] = test_b; 
-    chachamatrixIN[2][0] = test_c;
-    chachamatrixIN[3][0] = test_d;    
-    
-    
-     // Fill rest with don't cares
-    for (int i = 0; i < 4; i++) begin
-        for (int j = 1; j < 4; j++) begin
-            chachamatrixIN[i][j] = 32'h00000000;
-        end
-    end
-    
-   $display("Matrix with filled in Values an X's:");
-        for (int i = 0; i < 4; i++) begin
-            $write("Row %0d: ", i);
-            for(int j = 0; j < 4; j++) begin
-                $write("%08h ", chachamatrixIN[i][j]);
-            end
-            $write("\n");
-        end
-        $display(""); // Add blank line 
-    
-    
-    
-    #20
-    setRounds = 0;
-    #10;
-    
-    //SETTING INPUT VALUES FOR CALCULATE_STEP()
-    step_a = test_a; step_b = test_b; step_c = test_c; step_d = test_d;
-   
-   expected_a = test_a;    expected_b = test_d;    expected_c = test_c;    expected_d = test_d; 
-
-
-
-  
-  
-  
-  //STEP THROUGH S0-S6
-    for (int step = 0; step < 7; step++) begin
-       // Calculate expected values
-       calculate_step(step, step_a, step_b, step_c, step_d, 
-        expected_a, expected_b, expected_c, expected_d);
-        
-     @(posedge clk);
-     @(posedge clk);
-     
-     
-     
-      
-   step_a = expected_a;  // Next step uses these results as input
-   step_b = expected_b;
-   step_c = expected_c;
-   step_d = expected_d;
-   
-   
-   
-   
-end
-         
-                      
-                      
-//    //WAIT FOR OPS TO COMPLETE
-//    @(posedge clk);
-//    @(posedge clk);
-    
-    
-    //COMPARE UUT VALUES AGAINST EXPECTED ONES
-    
-//    if (uut.a !== expected_a) begin
-//            $display("ERROR S%0d: a mismatch! Expected=%08h, Got=%08h", 
-//                     step, expected_a, uut.a);
-//            error_found = 1;
-//        end
-        
-//        if (uut.b !== expected_b) begin
-//            $display("ERROR S%0d: b mismatch! Expected=%08h, Got=%08h", 
-//                     step, expected_b, uut.b);
-//            error_found = 1;
-//        end
-        
-//        if (uut.c !== expected_c) begin
-//            $display("ERROR S%0d: c mismatch! Expected=%08h, Got=%08h", 
-//                     step, expected_c, uut.c);
-//            error_found = 1;
-//        end
-        
-//        if (uut.d !== expected_d) begin
-//            $display("ERROR S%0d: d mismatch! Expected=%08h, Got=%08h", 
-//                     step, expected_d, uut.d);
-//            error_found = 1;
-//        end
-        
-//        //CHECKING TO SEE IF ALL uut values are correct
-//        $display("S%0d: a=%08h, b=%08h, c=%08h, d=%08h %s", step,
-//                 uut.a, uut.b, uut.c, uut.d, 
-//                 (uut.a === expected_a && uut.b === expected_b && 
-//                  uut.c === expected_c && uut.d === expected_d) ? "✓" : "✗");
-//                  end
-endtask
-
-    task print_input_matrix();
+        //Function that will print the inputmatrix
+          task print_input_matrix();
         $display("Input Matrix:");
         for (int i = 0; i < 4; i++) begin
             $write("Row %0d: ", i);
@@ -343,6 +54,7 @@ endtask
         $display(""); // Add blank line
     endtask
     
+    //fill the matrix with rand values
      task fill_matrix_random(); 
         for (int i = 0; i < 4; i++) begin
             for(int j = 0; j < 4; j++) begin
@@ -352,6 +64,164 @@ endtask
     endtask
     
     
+    
+   
+
+//will run from Q0-Q7
+  task test_arx_ops(  word_t chachamatrixIN [3:0][3:0] );
+  
+       
+       //variables that go into the simulated FSM
+       word_t test_a,test_b,test_c,test_d; //INPUT
+       
+       //values that the simulated FSM will produce
+       //will be compared with the DUT
+       word_t exp_a,exp_b,exp_c,exp_d; //OUTPUT    
+       
+       //stepper variable which will be used to move through simulated FSM  
+        logic [3:0] QSTEP;
+       
+       
+       
+       
+//       test10,test11,test12,test13,
+//       test20,test21, test22, test23,
+//       test30, test31, test32, test33;
+        
+        //word_t TESTINPUTMATRIX[3:0][3:0];
+        
+     chachamatrixIN[0][0] = test_a;
+    chachamatrixIN[1][0] = test_b; 
+    chachamatrixIN[2][0] = test_c;
+    chachamatrixIN[3][0] = test_d;    
+        
+        //fill in the test matrix with dont care values
+        for (int x = 0; x<4; x++) begin
+            for(int y = 1; y<4; y++) begin
+               chachamatrixIN[x][y] =32'h00000000;
+            end
+        end
+        
+         $display("Matrix with filled in Values an X's:");
+        for (int i = 0; i < 4; i++) begin
+            $write("Row %0d: ", i);
+            for(int j = 0; j < 4; j++) begin
+                $write("%08h ", chachamatrixIN[i][j]);
+            end
+            $write("\n");
+        end
+        $display(""); // Add blank line  
+        
+        calculate_step( test_a,test_b,test_c,test_d,
+  exp_a,exp_b,exp_c,exp_d);    
+                 
+       endtask 
+       
+       
+//will run from IDLE to S6       
+  task calculate_step( test_a, test_b, test_c, test_d,
+ output exp_a, exp_b, exp_c, exp_d);
+ 
+ int SSTEP;
+ //state tracking variables  
+ SSTEP = 0;
+
+ //SIMULATED FSM
+ while(SSTEP < 9) begin
+    //track = 1;
+@(posedge clk)
+
+        stepper( test_a,test_b,test_c,test_d, exp_a,exp_b,exp_c,exp_d);     
+    
+        test_a = exp_a;
+        test_b = exp_b;
+        test_c = exp_c;
+        test_d = exp_d;
+        
+        SSTEP = SSTEP + 1;
+
+    
+ end
+ SSTEP = 0;
+ 
+ endtask     
+ 
+ 
+ //ARX OPERATIONS 
+ task stepper( test_a,test_b,test_c,test_d, output exp_a,exp_b,exp_c,exp_d);
+ 
+  
+    case(uut.Currstep) 
+    
+    IDLE: begin
+      //IDLE STATE SO DO NOTHING
+        
+            $display("IN IDLE ");
+            
+
+    
+     end
+     
+     S0: begin
+      //IDLE STATE SO DO NOTHING
+        //if(uut.Currstep == IDLE) begin
+            $display("IN S0 STATE");      
+                       
+
+        end
+    
+    // end
+     
+     S1: begin
+      //IDLE STATE SO DO NOTHING
+            $display("IN S1 STATE");      
+
+        end
+
+     
+     S2: begin
+      //IDLE STATE SO DO NOTHING
+            $display("IN S2 STATE");      
+
+    
+     end
+     S3: begin
+      //IDLE STATE SO DO NOTHING
+            $display("IN S3 STATE");      
+
+    
+     end
+     
+     S4: begin
+      //IDLE STATE SO DO NOTHING
+            $display("IN S4 STATE");      
+
+    
+     end
+     
+     S5: begin
+            $display("IN S5 STATE");      
+
+    
+     end
+     
+     S6: begin
+            $display("IN S6 STATE");      
+
+    
+     end
+     
+     S7: begin
+      //IDLE STATE SO DO NOTHING
+            $display("IN S7 STATE");      
+
+    
+     end
+     
+     
+    
+    endcase   
+endtask
     // Clock generation
     initial clk = 0;
     always #5 clk = ~clk;
@@ -361,26 +231,37 @@ endtask
   
    
   initial begin
-//        $display("=== ChaCha20 PerformQround Test ===");
-        
-        // Test 1: Random values
-//        $display("Test 1: Random input values");
-        //setRounds = 1;
-//        fill_matrix_random();
-//        print_input_matrix();
-        //#20;
-        
+  
+        $display("=== ChaCha20 PerformQround Test ===");
         setRounds = 0;
         
-        
-        
-        $display("Test 2: Move through states S0-S7, Performing ARX ops");
-        #20
-        test_arx_ops();
-        
+        #20;
+        // Test 1: Random values
+        $display("Test 1: Random input values");
+        setRounds = 1;
+        fill_matrix_random();
+        #20;
+        print_input_matrix();
         #20;
         
-            
+        ///////NOTE WHEN FILLING THE MATRIX SETROUNDS NEED TO = 1/// ELSE KEEP LOW ALL THE TIME WHILE FSMS ARE RUNNING
+        
+        
+        
+        
+        
+        $display("Test 2: Move through states IDLE-S7, Performing ARX ops");
+      #20;
+           setRounds = 1;
+           #20;
+           setRounds = 0;
+       test_arx_ops(chachamatrixIN);
+       
+       $display("exited");
+        
+        #1000;
+        
+      
             
         
   $finish;
@@ -400,11 +281,11 @@ endtask
     
 //    // Helper task for quarter-round calculation
 //    task automatic quarter_round(
-//        input word_t a_in, b_in, c_in, d_in,
+//        input word_t temp_a, temp_b, temp_c,temp_d,
 //        output word_t a_out, b_out, c_out, d_out
 //    );
 //        word_t a, b, c, d;
-//        a = a_in; b = b_in; c = c_in; d = d_in;
+//        a = temp_a; b = temp_b; c = temp_c; d =temp_d;
         
 //        // ChaCha20 quarter-round: 4 steps
 //        a = a + b; d = d ^ a; d = {d[15:0], d[31:16]};  // Step 1

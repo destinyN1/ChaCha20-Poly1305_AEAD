@@ -83,10 +83,10 @@ module PerformQround
      
         //if right values are loaded perform the Qround
         if(loadvalues  == 0) begin
-         if (makeidle == 1) begin
-           idle <= 1;
-          end
-         else begin
+//         if (makeidle == 1) begin
+//           idle <= 1;
+//          end
+//         else begin
          idle <= 0;
           
             case (Currstep)
@@ -135,7 +135,7 @@ module PerformQround
                 end
             endcase
         end
-        end
+        //end
         else begin 
             case(CurrQ)
                 Q0: begin
@@ -278,6 +278,7 @@ module PerformQround
         //could also make this the state machine for Q rounds too
         // State machine logic for stepper
         case (Currstep)
+            IDLE:Nextstep = S0;
             S0: Nextstep = S1;
             S1: Nextstep = S2;
             S2: Nextstep = S3;
@@ -285,8 +286,8 @@ module PerformQround
             S4: Nextstep = S5;
             S5: Nextstep = S6;
             S6: Nextstep = S7;  // Loop back to start or advance Q round
-            S7: Nextstep = S0;
-            default: Nextstep = S0;
+            S7: Nextstep = IDLE;
+            default: Nextstep = IDLE;
         endcase
     end
     
