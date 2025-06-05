@@ -4,7 +4,6 @@ module Q0_Q7_Test_TB;
     word_t chachamatrixIN [3:0][3:0];
     word_t chachamatrixOUT [3:0][3:0];
     
-    word_t TEMPpchachastate[3:0][3:0];
     
     logic blockready;
     logic [3:0] blocksproduced;
@@ -60,7 +59,7 @@ module Q0_Q7_Test_TB;
         for (int i = 0; i < 4; i++) begin
             $write("Row %0d: ", i);
             for(int j = 0; j < 4; j++) begin
-                $write("%08h ", TEMPpchachastate[i][j]);
+                $write("%08h ", uut.TEMPpchachastate[i][j]);
             end
             $write("\n");
         end
@@ -137,7 +136,7 @@ module Q0_Q7_Test_TB;
        test_c = exp_c;
        test_d = exp_d;
        
-       #5;
+       
         
         calculate_step(test_a, test_b, test_c, test_d, exp_a, exp_b, exp_c, exp_d);   
         
@@ -164,18 +163,19 @@ module Q0_Q7_Test_TB;
         
         // SIMULATED FSM
         while(SSTEP < 8) begin
-            @(posedge clk)
+            @(posedge clk);
             
             stepper(test_a, test_b, test_c, test_d, exp_a, exp_b, exp_c, exp_d);
             
             #5;
+            
             if(((exp_a == uut.a) && (exp_b == uut.b)) && ((exp_c == uut.c) && (exp_d == uut.d))) begin
                 $display("S%0d PASS \n UUT.A/EXP_A = %08h/%08h \n UUT.B/EXP_B = %08h/%08h \n UUT.C/EXP_C = %08h/%08h \n UUT.D/EXP_D = %08h/%08h \n ", 
                          SSTEP, uut.a, exp_a, uut.b, exp_b, uut.c, exp_c, uut.d, exp_d);
             end
-            else if (uut.Currstep == IDLE) begin
-                $display("IN IDLE");
-            end      
+//            else if (uut.Currstep == IDLE) begin
+//                $display("IN IDLE");
+//            end      
             else begin
                 $display("S%0d FAIL \n UUT.A/EXP_A = %08h/%08h \n UUT.B/EXP_B = %08h/%08h \n UUT.C/EXP_C = %08h/%08h \n UUT.D/EXP_D = %08h/%08h \n ", 
                          SSTEP, uut.a, exp_a, uut.b, exp_b, uut.c, exp_c, uut.d, exp_d);            end
@@ -185,7 +185,11 @@ module Q0_Q7_Test_TB;
             test_c = exp_c;
             test_d = exp_d;
             
+            if (uut.Currstep != IDLE) begin
             SSTEP = SSTEP + 1;
+            end
+            
+            //MAYBE ADD SOME DELAY LOGIC HERE
             
         end
         SSTEP = 0;
@@ -200,6 +204,8 @@ module Q0_Q7_Test_TB;
         temp_b = test_b; 
         temp_c = test_c; 
         temp_d = test_d;
+        
+        
         
         case(uut.Currstep) 
             IDLE: begin
@@ -295,7 +301,7 @@ module Q0_Q7_Test_TB;
     
     $display("INPUT MATRIX \n");        
                 print_input_matrix();
-                
+                #5;
           $display("TEMP MATRIX \n");    
                 print_temp_matrix();    
 
@@ -308,12 +314,13 @@ module Q0_Q7_Test_TB;
         testq_b = chachamatrixIN[1][1]; 
         testq_c = chachamatrixIN[2][1];
         testq_d = chachamatrixIN[3][1];  
-        $display("In Q%0d \n",QSTEP);   
-                $display("INPUT MATRIX \n");        
-                print_input_matrix();
+        $display("In Q%0d \n",QSTEP); 
+          
+        $display("INPUT MATRIX \n");        
+        print_input_matrix();
                 
-                                $display("TEMP MATRIX \n");    
-                print_temp_matrix();    
+       $display("TEMP MATRIX \n");    
+       print_temp_matrix();    
 
                 
                         
@@ -327,11 +334,14 @@ module Q0_Q7_Test_TB;
         testq_b = chachamatrixIN[1][2]; 
         testq_c = chachamatrixIN[2][2];
         testq_d = chachamatrixIN[3][2];
-        $display("In Q%0d \n",QSTEP);  
-        
-                print_input_matrix();        
-
-        
+        $display("In Q%0d \n",QSTEP); 
+          
+        $display("INPUT MATRIX \n");        
+        print_input_matrix();
+                
+        $display("TEMP MATRIX \n");    
+        print_temp_matrix();
+       
         $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
        end       
      Q3:begin 
@@ -339,10 +349,13 @@ module Q0_Q7_Test_TB;
         testq_b = chachamatrixIN[1][3]; 
         testq_c = chachamatrixIN[2][3];
         testq_d = chachamatrixIN[3][3];
-        $display("In Q%0d \n",QSTEP);  
-        
-                print_input_matrix();        
-
+         $display("In Q%0d \n",QSTEP); 
+          
+        $display("INPUT MATRIX \n");        
+        print_input_matrix();
+                
+        $display("TEMP MATRIX \n");    
+        print_temp_matrix();
         
         $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
        end       
@@ -351,10 +364,13 @@ module Q0_Q7_Test_TB;
         testq_b = chachamatrixIN[1][1]; 
         testq_c = chachamatrixIN[2][2];
         testq_d = chachamatrixIN[3][3];
-        $display("In Q%0d \n",QSTEP);  
-        
-                print_input_matrix();        
-
+        $display("In Q%0d \n",QSTEP); 
+          
+        $display("INPUT MATRIX \n");        
+        print_input_matrix();
+                
+        $display("TEMP MATRIX \n");    
+        print_temp_matrix();
         
         $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
        end      
@@ -364,9 +380,12 @@ module Q0_Q7_Test_TB;
         testq_c = chachamatrixIN[2][3];
         testq_d = chachamatrixIN[3][0];
         $display("In Q%0d \n",QSTEP); 
-        
-                print_input_matrix();        
-
+          
+        $display("INPUT MATRIX \n");        
+        print_input_matrix();
+                
+        $display("TEMP MATRIX \n");    
+        print_temp_matrix();
         
         $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
        end     
@@ -376,10 +395,12 @@ module Q0_Q7_Test_TB;
         testq_c = chachamatrixIN[2][0];
         testq_d = chachamatrixIN[3][1];
         $display("In Q%0d \n",QSTEP); 
-        
-                print_input_matrix();        
-
-        
+          
+        $display("INPUT MATRIX \n");        
+        print_input_matrix();
+                
+        $display("TEMP MATRIX \n");    
+        print_temp_matrix();
         $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
        end
      Q7:begin 
@@ -387,12 +408,13 @@ module Q0_Q7_Test_TB;
         testq_b = chachamatrixIN[1][0]; 
         testq_c = chachamatrixIN[2][1];
         testq_d = chachamatrixIN[3][2];
-       
-        $display("In Q%0d \n",QSTEP);  
-        
-        
-                print_input_matrix();        
-
+        $display("In Q%0d \n",QSTEP); 
+          
+        $display("INPUT MATRIX \n");        
+        print_input_matrix();
+                
+        $display("TEMP MATRIX \n");    
+        print_temp_matrix();
         
         $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
    end

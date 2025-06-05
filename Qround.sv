@@ -132,6 +132,7 @@ module PerformQround
                 S7: begin    
                     CurrQ <= NextQ;
                     loadvalues <= 1;
+                    
                 end
             endcase
         end
@@ -144,6 +145,8 @@ module PerformQround
                     c <= chachamatrixIN[2][0];
                     d <= chachamatrixIN[3][0];
                     loadvalues <= 0;
+                   // assignnew <=1;
+                    
 
                 end 
              
@@ -208,10 +211,12 @@ module PerformQround
     
     // Combinational logic for storing quarter-round results
     always_comb begin
-     if(setRounds)
+     if(setRounds) begin
       TEMPpchachastate = chachamatrixIN;
-      else
+      end
+      else begin
       
+
         case (CurrQ) 
             Q0: begin
                 TEMPpchachastate[0][0] = a;
@@ -268,7 +273,9 @@ module PerformQround
                 TEMPpchachastate[2][1] = c;
                 TEMPpchachastate[3][2] = d;
             end
+            
         endcase
+        end
     end
     
     // Next step logic
