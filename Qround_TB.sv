@@ -3,13 +3,21 @@ module Q0_Q7_Test_TB;
     logic clk, setRounds;
     word_t chachamatrixIN [3:0][3:0];
     word_t chachamatrixOUT [3:0][3:0];
+    
+    word_t TEMPpchachastate[3:0][3:0];
+    
     logic blockready;
     logic [3:0] blocksproduced;
     
     typedef enum {IDLE, S0, S1, S2, S3, S4, S5, S6, S7} ARXSTATE;
+    typedef enum { Q0, Q1, Q2, Q3, Q4, Q5, Q6, Q7} QSTATE;
+
     
     logic [2:0] prev_currstep;
     logic [2:0] prev_currq;
+    
+    
+    int QSTEP;
     
     // Test variables
     word_t expected_matrix [3:0][3:0];
@@ -46,6 +54,19 @@ module Q0_Q7_Test_TB;
         $display(""); // Add blank line
     endtask
     
+    
+    task print_temp_matrix();
+        $display("Temp Matrix:");
+        for (int i = 0; i < 4; i++) begin
+            $write("Row %0d: ", i);
+            for(int j = 0; j < 4; j++) begin
+                $write("%08h ", TEMPpchachastate[i][j]);
+            end
+            $write("\n");
+        end
+        $display(""); // Add blank line
+    endtask
+    
     // Fill the matrix with rand values
     task fill_matrix_random(); 
         for (int i = 0; i < 4; i++) begin
@@ -65,42 +86,73 @@ module Q0_Q7_Test_TB;
         word_t exp_a, exp_b, exp_c, exp_d; // OUTPUT    
         
         // Stepper variable which will be used to move through simulated FSM  
-        logic [3:0] QSTEP;
+        //logic [3:0] QSTEP;
+        ;  
         
         setRounds = 1;
-        test_a = 32'haaaaaaaa;
-        test_b = 32'hbbbbbbbb; 
-        test_c = 32'hcccccccc;
-        test_d = 32'hdddddddd;
+        #10;
+        fill_matrix_random();
+        #10;
+        print_input_matrix();        
         
-        chachamatrixIN[0][0] = test_a;
-        chachamatrixIN[1][0] = test_b; 
-        chachamatrixIN[2][0] = test_c;
-        chachamatrixIN[3][0] = test_d;    
+        //Essentially Q0
+//        chachamatrixIN[0][0] = test_a;
+//        chachamatrixIN[1][0] = test_b; 
+//        chachamatrixIN[2][0] = test_c;
+//        chachamatrixIN[3][0] = test_d;    
         
         // Fill in the test matrix with dont care values
-        for (int x = 0; x < 4; x++) begin
-            for(int y = 1; y < 4; y++) begin
-                chachamatrixIN[x][y] = 32'h00000000;
-            end
-        end
+//        for (int x = 0; x < 4; x++) begin
+//            for(int y = 1; y < 4; y++) begin
+//                chachamatrixIN[x][y] = 32'h00000000;
+//            end
+//        end
         
         @(posedge clk);
         @(posedge clk);
         setRounds = 0;
         
-        $display("Matrix with filled in Values an X's:");
-        for (int i = 0; i < 4; i++) begin
-            $write("Row %0d: ", i);
-            for(int j = 0; j < 4; j++) begin
-                $write("%08h ", chachamatrixIN[i][j]);
-            end
-            $write("\n");
-        end
-        $display(""); // Add blank line  
+//        $display("Matrix with filled in Values:");
+//        for (int i = 0; i < 4; i++) begin
+//            $write("Row %0d: ", i);
+//            for(int j = 0; j < 4; j++) begin
+//                $write("%08h ", chachamatrixIN[i][j]);
+//            end
+//            $write("\n");
+//        end
+//        $display(""); // Add blank line  
         
-        calculate_step(test_a, test_b, test_c, test_d, exp_a, exp_b, exp_c, exp_d);    
+        //need to write a sort of a while loop that will call calc_step() and then move to the next Qround
+        //will write a function that moves to next Qround
+           
+       QSTEP = 0;
+
+       while( QSTEP <8) begin
+       
+       
+       Move_Q(test_a,test_b,test_c,test_d,exp_a,exp_b, exp_c,exp_d);
+       
+       test_a = exp_a;
+       test_b = exp_b;
+       test_c = exp_c;
+       test_d = exp_d;
+       
+       #5;
+        
+        calculate_step(test_a, test_b, test_c, test_d, exp_a, exp_b, exp_c, exp_d);   
+        
+        QSTEP = QSTEP +1;
+        
+      end
+      QSTEP = 0;  
+         
     endtask 
+    
+    
+    //Function that is responsible for loading correct a,b,c,d values from corresponding matrix locations
+    
+
+    
     
     // Will run from IDLE to S6       
     task calculate_step(input word_t test_a, test_b, test_c, test_d,
@@ -134,6 +186,7 @@ module Q0_Q7_Test_TB;
             test_d = exp_d;
             
             SSTEP = SSTEP + 1;
+            
         end
         SSTEP = 0;
     endtask     
@@ -155,7 +208,6 @@ module Q0_Q7_Test_TB;
             end
             
             S0: begin
-                // IDLE STATE SO DO NOTHING
                 $display("IN S0 STATE");     
                 temp_a = temp_a + temp_b;
                 temp_d = temp_d ^ temp_a; 
@@ -163,7 +215,6 @@ module Q0_Q7_Test_TB;
             end
             
             S1: begin
-                // IDLE STATE SO DO NOTHING
                 $display("IN S1 STATE");
                 temp_c = temp_c + temp_d;
                 temp_d = {temp_d[15:0], temp_d[31:16]}; // ROL 16     
@@ -171,7 +222,6 @@ module Q0_Q7_Test_TB;
             end
             
             S2: begin
-                // IDLE STATE SO DO NOTHING
                 $display("IN S2 STATE");      
                 temp_b = temp_b ^ temp_c;
                 temp_d = temp_d ^ temp_a;
@@ -179,7 +229,6 @@ module Q0_Q7_Test_TB;
             end
             
             S3: begin
-                // IDLE STATE SO DO NOTHING
                 $display("IN S3 STATE");      
                 temp_b = {temp_b[19:0], temp_b[31:20]}; // ROL 12
                 temp_d = {temp_d[15:0], temp_d[31:16]}; // ROL 16
@@ -187,7 +236,6 @@ module Q0_Q7_Test_TB;
             end
             
             S4: begin
-                // IDLE STATE SO DO NOTHING
                 $display("IN S4 STATE");      
                 temp_a = temp_a + temp_b;
                 temp_d = {temp_d[23:0], temp_d[31:24]}; // ROL 8
@@ -222,6 +270,146 @@ module Q0_Q7_Test_TB;
         exp_c_waveform = temp_c;
         exp_d_waveform = temp_d;
     endtask
+    
+    
+    
+     task Move_Q(input word_t test_a,test_b, test_c,test_d, output word_t exp_a,exp_b, exp_c,exp_d);
+    
+    word_t testq_a,testq_b,testq_c,testq_d;
+    
+    testq_a = test_a;
+    testq_b = test_b;
+    testq_c = test_c;
+    testq_d = test_d;
+    
+    
+    case(uut.CurrQ)
+    
+    Q0:begin 
+    testq_a = chachamatrixIN[0][0];
+    testq_b = chachamatrixIN[1][0]; 
+    testq_c = chachamatrixIN[2][0];
+    testq_d = chachamatrixIN[3][0];
+    $display("In Q%0d \n",QSTEP);    
+    
+    
+    $display("INPUT MATRIX \n");        
+                print_input_matrix();
+                
+          $display("TEMP MATRIX \n");    
+                print_temp_matrix();    
+
+    
+    $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);    
+
+   end
+    Q1:begin 
+        testq_a = chachamatrixIN[0][1];
+        testq_b = chachamatrixIN[1][1]; 
+        testq_c = chachamatrixIN[2][1];
+        testq_d = chachamatrixIN[3][1];  
+        $display("In Q%0d \n",QSTEP);   
+                $display("INPUT MATRIX \n");        
+                print_input_matrix();
+                
+                                $display("TEMP MATRIX \n");    
+                print_temp_matrix();    
+
+                
+                        
+
+        
+        $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);    
+ 
+       end
+    Q2:begin 
+        testq_a = chachamatrixIN[0][2];
+        testq_b = chachamatrixIN[1][2]; 
+        testq_c = chachamatrixIN[2][2];
+        testq_d = chachamatrixIN[3][2];
+        $display("In Q%0d \n",QSTEP);  
+        
+                print_input_matrix();        
+
+        
+        $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
+       end       
+     Q3:begin 
+        testq_a = chachamatrixIN[0][3];
+        testq_b = chachamatrixIN[1][3]; 
+        testq_c = chachamatrixIN[2][3];
+        testq_d = chachamatrixIN[3][3];
+        $display("In Q%0d \n",QSTEP);  
+        
+                print_input_matrix();        
+
+        
+        $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
+       end       
+     Q4:begin 
+        testq_a = chachamatrixIN[0][0];
+        testq_b = chachamatrixIN[1][1]; 
+        testq_c = chachamatrixIN[2][2];
+        testq_d = chachamatrixIN[3][3];
+        $display("In Q%0d \n",QSTEP);  
+        
+                print_input_matrix();        
+
+        
+        $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
+       end      
+     Q5:begin 
+        testq_a = chachamatrixIN[0][1];
+        testq_b = chachamatrixIN[1][2]; 
+        testq_c = chachamatrixIN[2][3];
+        testq_d = chachamatrixIN[3][0];
+        $display("In Q%0d \n",QSTEP); 
+        
+                print_input_matrix();        
+
+        
+        $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
+       end     
+      Q6:begin 
+        testq_a = chachamatrixIN[0][2];
+        testq_b = chachamatrixIN[1][3]; 
+        testq_c = chachamatrixIN[2][0];
+        testq_d = chachamatrixIN[3][1];
+        $display("In Q%0d \n",QSTEP); 
+        
+                print_input_matrix();        
+
+        
+        $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
+       end
+     Q7:begin 
+        testq_a = chachamatrixIN[0][3];
+        testq_b = chachamatrixIN[1][0]; 
+        testq_c = chachamatrixIN[2][1];
+        testq_d = chachamatrixIN[3][2];
+       
+        $display("In Q%0d \n",QSTEP);  
+        
+        
+                print_input_matrix();        
+
+        
+        $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
+   end
+                     
+    
+    endcase
+    
+    exp_a = testq_a;
+    exp_b = testq_b;
+    exp_c = testq_c;
+    exp_d = testq_d;
+    
+    
+    endtask
+    
+    
+    
     
     // Clock generation
     initial clk = 0;
