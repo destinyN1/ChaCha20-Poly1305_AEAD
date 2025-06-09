@@ -34,7 +34,13 @@ module PerformQround
 );
     //intermediate value held for calculations and initial value held for adding at the end
     word_t INITchachastate [3:0][3:0];
+    
+    //temp matrix to hold values for Qround 0 - 3
     word_t TEMPpchachastate [3:0][3:0];
+    
+    
+    //another temp matrix to hold values for Qround 4 - 7
+    word_t TEMPchachastateQ4Q7 [3:0][3:0];
     
     word_t a, b, c, d;
     
@@ -58,11 +64,17 @@ module PerformQround
             Currstep <= IDLE;
             CurrQ <= Q0;
             counter <= 0;
+            TEMPchachastateQ4Q7 <= '{default:0};
             loadvalues <= 1; // need to keep this value high while loading the matrix 
           
         end  
         else begin      
             Currstep <= Nextstep;
+            
+            if(CurrQ == Q3) begin  
+               TEMPchachastateQ4Q7 <= TEMPpchachastate;
+        end   
+            
             if(CurrQ == Q7) begin
                 counter <= counter + 1;
                 loadvalues <= 1;
@@ -74,6 +86,10 @@ module PerformQround
             end
         end 
     end
+    
+   
+      
+    
     
     //logic for 1 Q round
     always_ff @(posedge clk) begin
@@ -172,111 +188,120 @@ module PerformQround
                     c <= chachamatrixIN[2][3];
                     d <= chachamatrixIN[3][3];
                     loadvalues <= 0;
+                    
+                 
                 end 
           
                 Q4: begin
-                    a <= chachamatrixIN[0][0];
-                    b <= chachamatrixIN[1][1];
-                    c <= chachamatrixIN[2][2];
-                    d <= chachamatrixIN[3][3];
+                //From Q4 and onwards use new values
+                    a <=TEMPchachastateQ4Q7[0][0];
+                    b <=TEMPchachastateQ4Q7[1][1];
+                    c <=TEMPchachastateQ4Q7[2][2];
+                    d <=TEMPchachastateQ4Q7[3][3];
                     loadvalues <= 0;
                 end 
           
                 Q5: begin
-                    a <= chachamatrixIN[0][1];
-                    b <= chachamatrixIN[1][2];
-                    c <= chachamatrixIN[2][3];
-                    d <= chachamatrixIN[3][0];
+                    a <=TEMPchachastateQ4Q7[0][1];
+                    b <=TEMPchachastateQ4Q7[1][2];
+                    c <=TEMPchachastateQ4Q7[2][3];
+                    d <=TEMPchachastateQ4Q7[3][0];
                     loadvalues <= 0;
                 end 
           
                 Q6: begin
-                    a <= chachamatrixIN[0][2];
-                    b <= chachamatrixIN[1][3];
-                    c <= chachamatrixIN[2][0];
-                    d <= chachamatrixIN[3][1];
+                    a <=TEMPchachastateQ4Q7[0][2];
+                    b <=TEMPchachastateQ4Q7[1][3];
+                    c <=TEMPchachastateQ4Q7[2][0];
+                    d <=TEMPchachastateQ4Q7[3][1];
                     loadvalues <= 0;
                 end
           
                 Q7: begin
-                    a <= chachamatrixIN[0][3];
-                    b <= chachamatrixIN[1][0];
-                    c <= chachamatrixIN[2][1];
-                    d <= chachamatrixIN[3][2];
+                    a <=TEMPchachastateQ4Q7[0][3];
+                    b <=TEMPchachastateQ4Q7[1][0];
+                    c <=TEMPchachastateQ4Q7[2][1];
+                    d <=TEMPchachastateQ4Q7[3][2];
                     loadvalues <= 0;
                 end  
             endcase    
         end
     end
     
+    
+  
+    
+    
     // Combinational logic for storing quarter-round results
-    always_comb begin
+    always_ff @(posedge clk) begin
      if(setRounds) begin
-      TEMPpchachastate = chachamatrixIN;
+      TEMPpchachastate <= chachamatrixIN;
       end
-      else begin
       
+      end
 
+    
+    always_ff @(posedge clk) begin
+    
         case (CurrQ) 
             Q0: begin
-                TEMPpchachastate[0][0] = a;
-                TEMPpchachastate[1][0] = b;
-                TEMPpchachastate[2][0] = c;
-                TEMPpchachastate[3][0] = d;
+                TEMPpchachastate[0][0] <= a;
+                TEMPpchachastate[1][0] <= b;
+                TEMPpchachastate[2][0] <= c;
+                TEMPpchachastate[3][0] <= d;
             end
             
             Q1: begin
-                TEMPpchachastate[0][1] = a;
-                TEMPpchachastate[1][1] = b;
-                TEMPpchachastate[2][1] = c;
-                TEMPpchachastate[3][1] = d;
+                TEMPpchachastate[0][1] <= a;
+                TEMPpchachastate[1][1] <= b;
+                TEMPpchachastate[2][1] <= c;
+                TEMPpchachastate[3][1] <= d;
             end
             
             Q2: begin
-                TEMPpchachastate[0][2] = a;
-                TEMPpchachastate[1][2] = b;
-                TEMPpchachastate[2][2] = c;
-                TEMPpchachastate[3][2] = d;
+                TEMPpchachastate[0][2] <= a;
+                TEMPpchachastate[1][2] <= b;
+                TEMPpchachastate[2][2] <= c;
+                TEMPpchachastate[3][2] <= d;
             end
             
             Q3: begin
-                TEMPpchachastate[0][3] = a;
-                TEMPpchachastate[1][3] = b;
-                TEMPpchachastate[2][3] = c;
-                TEMPpchachastate[3][3] = d;
+                TEMPpchachastate[0][3] <= a;
+                TEMPpchachastate[1][3] <= b;
+                TEMPpchachastate[2][3] <= c;
+                TEMPpchachastate[3][3] <= d;
             end
             
             Q4: begin
-                TEMPpchachastate[0][0] = a;
-                TEMPpchachastate[1][1] = b;
-                TEMPpchachastate[2][2] = c;
-                TEMPpchachastate[3][3] = d;
+                TEMPchachastateQ4Q7[0][0] <= a;
+                TEMPchachastateQ4Q7[1][1] <= b;
+                TEMPchachastateQ4Q7[2][2] <= c;
+                TEMPchachastateQ4Q7[3][3] <= d;
             end
             
             Q5: begin
-                TEMPpchachastate[0][1] = a;
-                TEMPpchachastate[1][2] = b;
-                TEMPpchachastate[2][3] = c;
-                TEMPpchachastate[3][0] = d;
+                TEMPchachastateQ4Q7[0][1] <= a;
+                TEMPchachastateQ4Q7[1][2] <= b;
+                TEMPchachastateQ4Q7[2][3] <= c;
+                TEMPchachastateQ4Q7[3][0] <= d;
             end
             
             Q6: begin
-                TEMPpchachastate[0][2] = a;
-                TEMPpchachastate[1][3] = b;
-                TEMPpchachastate[2][0] = c;
-                TEMPpchachastate[3][1] = d;
+                TEMPchachastateQ4Q7[0][2] <= a;
+                TEMPchachastateQ4Q7[1][3] <= b;
+                TEMPchachastateQ4Q7[2][0] <= c;
+                TEMPchachastateQ4Q7[3][1] <= d;
             end
             
             Q7: begin
-                TEMPpchachastate[0][3] = a;
-                TEMPpchachastate[1][0] = b;
-                TEMPpchachastate[2][1] = c;
-                TEMPpchachastate[3][2] = d;
+                TEMPchachastateQ4Q7[0][3] <= a;
+                TEMPchachastateQ4Q7[1][0] <= b;
+                TEMPchachastateQ4Q7[2][1] <= c;
+                TEMPchachastateQ4Q7[3][2] <= d;
             end
             
         endcase
         end
-    end
     
     // Next step logic
     always_comb begin
@@ -298,11 +323,14 @@ module PerformQround
         endcase
     end
     
+    
+    
+    //CHANGE THIS FILL MATRIX STATEMENT INTO AN FF BLOCK EVENTUALLY 
     //Comb logic for moving to various Q rounds
     always_comb begin
         for (int x = 0; x < 4; x++) begin
             for (int y = 0; y < 4; y++) begin
-                INITchachastate[x][y] = chachamatrixIN[x][y];
+                INITchachastate[x][y] =chachamatrixIN[x][y];
             end
         end
         
@@ -345,7 +373,7 @@ module PerformQround
         if (counter == 20) begin
             for (int x = 0; x < 4; x++) begin
                 for (int y = 0; y < 4; y++) begin
-                    chachamatrixOUT[x][y] = INITchachastate[x][y] + TEMPpchachastate[x][y];
+                    chachamatrixOUT[x][y] = INITchachastate[x][y] + TEMPchachastateQ4Q7[x][y];
                     blockready = 1;
                 end
             end

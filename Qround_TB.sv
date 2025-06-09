@@ -40,6 +40,12 @@ module Q0_Q7_Test_TB;
     
     // Reference Values for step by step verification
     
+    
+    //function that will perform Qrounds
+    
+    
+    
+    
     // Function that will print the inputmatrix
     task print_input_matrix();
         $display("Input Matrix:");
@@ -60,6 +66,18 @@ module Q0_Q7_Test_TB;
             $write("Row %0d: ", i);
             for(int j = 0; j < 4; j++) begin
                 $write("%08h ", uut.TEMPpchachastate[i][j]);
+            end
+            $write("\n");
+        end
+        $display(""); // Add blank line
+    endtask
+    
+     task print_tempQ0Q7_matrix();
+        $display("Temp Matrix:");
+        for (int i = 0; i < 4; i++) begin
+            $write("Row %0d: ", i);
+            for(int j = 0; j < 4; j++) begin
+                $write("%08h ", uut.TEMPchachastateQ4Q7[i][j]);
             end
             $write("\n");
         end
@@ -262,7 +280,14 @@ module Q0_Q7_Test_TB;
             end
             
             S7: begin
-                $display("IN S7 STATE, DO NOTHING");      
+           $display("IN S7 STATE, DO NOTHING");      
+                
+//               if(uut.CurrQ == Q3) begin
+//                print_temp_matrix();
+//               print_tempQ0Q7_matrix();
+                    
+//                   end
+                    
             end
         endcase   
         
@@ -360,61 +385,61 @@ module Q0_Q7_Test_TB;
         $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
        end       
      Q4:begin 
-        testq_a = chachamatrixIN[0][0];
-        testq_b = chachamatrixIN[1][1]; 
-        testq_c = chachamatrixIN[2][2];
-        testq_d = chachamatrixIN[3][3];
+        testq_a = uut.TEMPchachastateQ4Q7[0][0];
+        testq_b = uut.TEMPchachastateQ4Q7[1][1]; 
+        testq_c = uut.TEMPchachastateQ4Q7[2][2];
+        testq_d = uut.TEMPchachastateQ4Q7[3][3];
         $display("In Q%0d \n",QSTEP); 
           
-        $display("INPUT MATRIX \n");        
+        $display("TEMP MATRIX \n");        
         print_input_matrix();
                 
-        $display("TEMP MATRIX \n");    
-        print_temp_matrix();
+        $display("TEMPQ4Q MATRIX \n");    
+        print_tempQ0Q7_matrix();
         
         $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
        end      
      Q5:begin 
-        testq_a = chachamatrixIN[0][1];
-        testq_b = chachamatrixIN[1][2]; 
-        testq_c = chachamatrixIN[2][3];
-        testq_d = chachamatrixIN[3][0];
+        testq_a = uut.TEMPchachastateQ4Q7[0][1];
+        testq_b = uut.TEMPchachastateQ4Q7[1][2]; 
+        testq_c = uut.TEMPchachastateQ4Q7[2][3];
+        testq_d = uut.TEMPchachastateQ4Q7 [3][0];
         $display("In Q%0d \n",QSTEP); 
           
         $display("INPUT MATRIX \n");        
         print_input_matrix();
                 
         $display("TEMP MATRIX \n");    
-        print_temp_matrix();
+        print_tempQ0Q7_matrix();
         
         $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
        end     
       Q6:begin 
-        testq_a = chachamatrixIN[0][2];
-        testq_b = chachamatrixIN[1][3]; 
-        testq_c = chachamatrixIN[2][0];
-        testq_d = chachamatrixIN[3][1];
+        testq_a = uut.TEMPchachastateQ4Q7 [0][2];
+        testq_b = uut.TEMPchachastateQ4Q7 [1][3]; 
+        testq_c = uut.TEMPchachastateQ4Q7 [2][0];
+        testq_d = uut.TEMPchachastateQ4Q7 [3][1];
         $display("In Q%0d \n",QSTEP); 
           
         $display("INPUT MATRIX \n");        
         print_input_matrix();
                 
         $display("TEMP MATRIX \n");    
-        print_temp_matrix();
+        print_tempQ0Q7_matrix();
         $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
        end
      Q7:begin 
-        testq_a = chachamatrixIN[0][3];
-        testq_b = chachamatrixIN[1][0]; 
-        testq_c = chachamatrixIN[2][1];
-        testq_d = chachamatrixIN[3][2];
+        testq_a = uut.TEMPchachastateQ4Q7[0][3];
+        testq_b = uut.TEMPchachastateQ4Q7 [1][0]; 
+        testq_c = uut.TEMPchachastateQ4Q7[2][1];
+        testq_d = uut.TEMPchachastateQ4Q7[3][2];
         $display("In Q%0d \n",QSTEP); 
           
         $display("INPUT MATRIX \n");        
         print_input_matrix();
                 
         $display("TEMP MATRIX \n");    
-        print_temp_matrix();
+        print_tempQ0Q7_matrix();
         
         $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
    end
