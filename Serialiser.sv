@@ -21,6 +21,7 @@
 
 //will output serial data in 32 bit chunks as of now
 
+typedef logic [31:0] word_t;
 
 // loosely based off of  the SerDes Architecture
 module Serialiser(
@@ -40,7 +41,8 @@ module Serialiser(
         if(rst) begin
             counter <= 4'b0;
             data_reg <= '{default:0};
-        end
+            validS <= 0;
+        end                                    //LOAD_ENABLE AND RST NEED TO BE LOW FOR COUNTER TO START INCREMENTING
         else if(load_enable) begin
             data_reg <= indata;
             counter <= 4'b0;
