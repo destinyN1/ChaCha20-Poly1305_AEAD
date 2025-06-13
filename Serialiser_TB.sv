@@ -112,9 +112,18 @@ $display("counter is %0d:",uut.counter);
 load_enable = 0;
 
 
-#200;
+#800;
 
+rst = 1;
+#10;
+rst = 0;
+load_enable=1;
+#10;
+load_enable = 0;
 
+#700;
+
+//TO INPUT NEW STATE MATRIX NEED TO SET RST = 1/ RST =0 / LOAD_ENABLE = 1, LOAD_ENABLE = 0
 
 
 

@@ -29,12 +29,15 @@ module Serialiser(
     input word_t indata [3:0][3:0],
     input logic load_enable,    // Signal to load new data
     output word_t outdata,
-    output logic validS         // Indicates valid output
+    output logic validS,         // Indicates valid output
+    output logic [7:0] outdata_split
 );
     
     word_t data_reg [3:0][3:0];
     logic [3:0] counter;
     logic [1:0] row, col;
+    logic [1:0] byte_index;
+    logic split; //signal that will indicate to the counter to stop or start counting
     
     // Counter and address generation
     always_ff @(posedge clk) begin
@@ -42,13 +45,26 @@ module Serialiser(
             counter <= 4'b0;
             data_reg <= '{default:0};
             validS <= 0;
+            split <= 0;
         end                                    //LOAD_ENABLE AND RST NEED TO BE LOW FOR COUNTER TO START INCREMENTING
         else if(load_enable) begin
             data_reg <= indata;
             counter <= 4'b0;
+            byte_index <=0;
         end
         else if(counter < 4'd15) begin
+        
+            if(byte_index == 3) begin
+        
             counter <= counter + 1'b1;
+            split <=1;
+            
+            byte_index <= 0;
+            end
+            else begin
+            byte_index <= byte_index + 1;
+            split <= 0;
+            end
         end
     end
     
@@ -67,6 +83,32 @@ module Serialiser(
     
     // Output logic
     assign outdata = data_reg[row][col];
+    
+  //block that will split the Outdata into 1 Byte chunks  
+    always_comb begin
+    
+    case(byte_index)
+    
+    0:begin
+    outdata_split = outdata[31:24];
+
+    end
+
+    1:begin
+    outdata_split = outdata[23:16];
+    end
+ 
+    2:begin
+    outdata_split = outdata[15:8];
+    end
+    
+    3:begin
+    outdata_split = outdata[7:0];
+    end
+    
+    endcase    
+        
+    end
     
 endmodule
     
