@@ -19,14 +19,13 @@
 //// 
 ////////////////////////////////////////////////////////////////////////////////////
 
-  typedef logic [31:0] word_t;
-
+//typedef logic [31:0] word_t;
 
 //perform all necessary Q rounds, track which Q round we need to perform, add initial chacha matrix to finished one and then output
 module PerformQround
 (
     input  word_t chachamatrixIN[3:0][3:0],
-    input  logic  clk, setRounds, makeidle,
+    input  logic  clk, setRounds, 
     output word_t chachamatrixOUT[3:0][3:0],
     
     output logic blockready,
@@ -96,6 +95,9 @@ module PerformQround
         if(setRounds) begin 
             CurrQ <= Q0;
         end
+        else if (Currstep == S7 && loadvalues == 0) begin
+        CurrQ <= NextQ;
+        end
      
         //if right values are loaded perform the Qround
         if(loadvalues  == 0) begin
@@ -146,7 +148,6 @@ module PerformQround
                 end   
              
                 S7: begin    
-                    CurrQ <= NextQ;
                     loadvalues <= 1;
                     
                 end
@@ -333,6 +334,8 @@ module PerformQround
                 INITchachastate[x][y] =chachamatrixIN[x][y];
             end
         end
+        
+        
         
         NextQ = CurrQ;
 

@@ -236,6 +236,12 @@ module Q0_Q7_Test_TB;
                 temp_a = temp_a + temp_b;
                 temp_d = temp_d ^ temp_a; 
                 $display("  After S0:  temp_a = %08h, temp_d = %08h", temp_a, temp_d);
+                
+                
+                print_input_matrix();
+                 print_temp_matrix();
+                 print_tempQ0Q7_matrix();
+                
             end
             
             S1: begin

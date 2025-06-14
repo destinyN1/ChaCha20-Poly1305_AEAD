@@ -21,7 +21,7 @@
 
 //will output serial data in 32 bit chunks as of now
 
-typedef logic [31:0] word_t;
+//typedef logic [31:0] word_t;
 
 // loosely based off of  the SerDes Architecture
 module Serialiser(
