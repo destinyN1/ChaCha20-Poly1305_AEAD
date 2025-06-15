@@ -14,7 +14,7 @@ module Q0_Q7_Test_TB;
     
     logic [2:0] prev_currstep;
     logic [2:0] prev_currq;
-    
+      
     
     int QSTEP;
     

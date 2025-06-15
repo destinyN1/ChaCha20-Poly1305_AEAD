@@ -33,6 +33,9 @@ logic [DATA_SIZE - 1: 0] input_data_split;
 logic [DATA_SIZE-1:0] concatout [0:NO_REG - 1];
 
 
+Concatenator uut(.clk(clk),.rst(rst),.input_data_split(input_data_split),.full(full),.concatout(concatout));
+
+
 
 initial clk = 0;
 always #5 clk = ~clk;
@@ -50,11 +53,26 @@ rst = 1;
 #10;
 
 
-//VERIFY FILLING OF EACH STORAGE ELEMENT WITH ADDR INCREMENT
+//VERIFY FILLING OF EACH STORAGE ELEMENT WITH ADDR INCREMENT (expecting it to just fill all with 'inputdatasplit'
 
 rst = 0;
 
+input_data_split = 8'h8;
+//VERIFYING IF FULL CONDITIONAL AND ASSERTION
+//wait until the buffer is full
+wait(full == 1);
 
+// start counting again
+#10;
+
+
+#10;
+
+rst = 0;
+
+input_data_split = 8'h7;
+
+wait(full == 1);
 
 
 
