@@ -21,7 +21,7 @@
 
 //will output serial data in 32 bit chunks as of now
 
-//typedef logic [31:0] word_t;
+typedef logic [31:0] word_t; 
 
 // loosely based off of  the SerDes Architecture
 module Serialiser(
@@ -30,6 +30,7 @@ module Serialiser(
     input logic load_enable,    // Signal to load new data
     output word_t outdata,
     output logic validS,         // Indicates valid output
+    output logic concat_en, //signal that will tell concatenator to come out of pause and start operating 
     output logic [7:0] outdata_split
 );
     
@@ -91,19 +92,26 @@ module Serialiser(
     
     0:begin
     outdata_split = outdata[31:24];
+    concat_en = 1;
 
     end
 
     1:begin
     outdata_split = outdata[23:16];
+    concat_en = 1;
+
     end
  
     2:begin
     outdata_split = outdata[15:8];
+    concat_en = 1;
+
     end
     
     3:begin
     outdata_split = outdata[7:0];
+    concat_en = 1;
+
     end
     
     endcase    

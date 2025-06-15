@@ -22,7 +22,6 @@
 
 
 
-typedef logic [31:0] word_t;
 
 
 //WILL MAKE THIS A SYNCHRONOUS BUFFER
@@ -32,10 +31,11 @@ module Concatenator #(parameter DATA_SIZE = 8, NUM_MATRICES = 2, NO_REG = 64 * N
 
 (
 
-input logic  clk, rst,
+input logic  clk,  concat_en,
 
 input logic [DATA_SIZE-1:0] input_data_split,
 
+ input logic rst,
 
 output logic full,
 
@@ -56,12 +56,13 @@ logic [$clog2(NO_REG) : 0] write_addr; //need to have some unused bits here so w
    
 logic [DATA_SIZE-1:0] CURR_input_data_split, PREV_input_data_split;
 
-logic [1:0] pause_counter;
-logic in_pause;
+
+
  
  
  always_ff @(posedge clk) begin
- 
+  
+  
    if (rst) begin
    
    //SET THE ADDRESS TO ZERO AND CLEAR STORAGE ON RST
@@ -75,16 +76,14 @@ logic in_pause;
     
     end
    full <= 0;
-   pause_counter <= 0;
-   in_pause <= 0;
-   
+  
    CURR_input_data_split <= input_data_split;
    PREV_input_data_split <= '0; //might be a very particular edge case where input_data_split is zero so need to add some logic to account for this
 
    end
    // if(!in_pause)  begin // could add a pause mechanism or just tell the concatenator to reset every time it its full
    // need to add a condition here to check if the last inputr value changed, only execute the following statement if so
-   else if (write_addr <= NO_REG -1  ) begin
+   else if ((write_addr <= NO_REG -1) && concat_en == 1  ) begin
    
     full <= 0;
     CURR_input_data_split <= input_data_split;
@@ -107,7 +106,8 @@ logic in_pause;
       
       
       
-      end
+      
+    end
     end
     
    // end
