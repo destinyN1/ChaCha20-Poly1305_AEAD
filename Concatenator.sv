@@ -82,22 +82,27 @@ logic in_pause;
    PREV_input_data_split <= '0; //might be a very particular edge case where input_data_split is zero so need to add some logic to account for this
 
    end
-   // if(!in_pause)  begin
+   // if(!in_pause)  begin // could add a pause mechanism or just tell the concatenator to reset every time it its full
    // need to add a condition here to check if the last inputr value changed, only execute the following statement if so
    else if (write_addr <= NO_REG -1  ) begin
    
     full <= 0;
+    CURR_input_data_split <= input_data_split;
+
+    
    
-      // if((CURR_input_data_split != PREV_input_data_split) || (CURR_input_data_split == '0)) begin
+       if((CURR_input_data_split != PREV_input_data_split) || (CURR_input_data_split == '0) || write_addr == 0) begin
         storage[write_addr] <= input_data_split;
         write_addr <= write_addr + 1;
-        //PREV_input_data_split <= CURR_input_data_split;
-     //   end
-     
+        end
+        
+        
+
        end
      else begin
       full <= 1;
       write_addr <= 0;
+      PREV_input_data_split <= 0;
       
       
       

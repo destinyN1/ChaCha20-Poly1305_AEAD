@@ -53,18 +53,29 @@ rst = 1;
 #10;
 
 
-//VERIFY FILLING OF EACH STORAGE ELEMENT WITH ADDR INCREMENT (expecting it to just fill all with 'inputdatasplit'
+//VERIFY FILLING OF EACH STORAGE ELEMENT WITH ADDR INCREMENT  
 
 rst = 0;
 
-input_data_split = 8'h8;
+input_data_split = $urandom();
+
+@(posedge clk);
+
+for (int i = 0; i<NO_REG -1 ;i++ ) begin
+
+input_data_split = input_data_split + i;
+@(posedge clk);
+end
+
+
 //VERIFYING IF FULL CONDITIONAL AND ASSERTION
 //wait until the buffer is full
 wait(full == 1);
 
-// start counting again
+//reset and start counting again
 #10;
 
+rst = 1;
 
 #10;
 
