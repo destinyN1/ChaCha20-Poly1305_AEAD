@@ -27,7 +27,7 @@
 //WILL MAKE THIS A SYNCHRONOUS BUFFER
 //DATA_SIZE = 8 bits, THIS IS THE SIZE OF OUR INPUT COMING FROM THE SERIALISER
 //NO_REG = 64 * NO_MATRICES, LETS US SPECIFY HOW MANY SERIALISED STATE MATRICES WE CAN STORE
-module Concatenator #(parameter DATA_SIZE = 8, NUM_MATRICES = 2, NO_REG = 64 * NUM_MATRICES  ) 
+module Concatenator #(parameter DATA_SIZE = 8, NUM_MATRICES = 20, NO_REG = 64 * NUM_MATRICES  ) 
 
 (
 
@@ -57,6 +57,16 @@ logic [$clog2(NO_REG) : 0] write_addr; //need to have some unused bits here so w
 logic [DATA_SIZE-1:0] CURR_input_data_split, PREV_input_data_split;
 
 
+typedef enum {IDLE, WORKING} state_t;
+state_t CS,NS;
+
+//always_ff @(posedge clk) begin
+
+//if (rst)
+
+//CS <= IDLE
+
+//end
 
  
  
@@ -83,7 +93,7 @@ logic [DATA_SIZE-1:0] CURR_input_data_split, PREV_input_data_split;
    end
    // if(!in_pause)  begin // could add a pause mechanism or just tell the concatenator to reset every time it its full
    // need to add a condition here to check if the last inputr value changed, only execute the following statement if so
-   else if ((write_addr <= NO_REG -1) && concat_en == 1  ) begin
+   else if ((write_addr <= NO_REG -1)  ) begin //&& concat_en == 1 
    
     full <= 0;
     CURR_input_data_split <= input_data_split;

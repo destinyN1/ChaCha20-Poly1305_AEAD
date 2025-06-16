@@ -23,7 +23,7 @@
 module Concatenator_TB;
 
 parameter DATA_SIZE = 8;
-parameter NUM_MATRICES = 2;
+parameter NUM_MATRICES = 20; // handle 512 x 20 bit Plain text
 parameter NO_REG = 64*NUM_MATRICES;
 
 logic clk,rst,full;
@@ -67,13 +67,15 @@ input_data_split = input_data_split + i;
 @(posedge clk);
 end
 
+@(posedge clk);
+
 
 //VERIFYING IF FULL CONDITIONAL AND ASSERTION
 //wait until the buffer is full
 wait(full == 1);
 
 //reset and start counting again
-#10;
+#90;
 
 rst = 1;
 

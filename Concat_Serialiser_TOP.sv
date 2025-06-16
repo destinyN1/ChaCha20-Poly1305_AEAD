@@ -19,6 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
+typedef logic [31:0] word_t;
 
 module Concat_Serialiser_TOP #(parameter DATA_SIZE = 8, NUM_MATRICES = 2, NO_REG = 64 * NUM_MATRICES  )(
  
@@ -36,6 +37,7 @@ module Concat_Serialiser_TOP #(parameter DATA_SIZE = 8, NUM_MATRICES = 2, NO_REG
     logic [7:0] outdata_split;
     logic full;
     word_t outdata;  // Added missing signal
+    logic Crst; // will reset the C when full is high
 
     
  Serialiser S (
