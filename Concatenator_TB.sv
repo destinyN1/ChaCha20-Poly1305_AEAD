@@ -23,7 +23,7 @@
 module Concatenator_TB;
 
 parameter DATA_SIZE = 8;
-parameter NUM_MATRICES = 2;
+parameter NUM_MATRICES = 20; // handle 512 x 20 bit Plain text
 parameter NO_REG = 64*NUM_MATRICES;
 
 logic clk,rst,full;
@@ -31,6 +31,9 @@ logic clk,rst,full;
 logic [DATA_SIZE - 1: 0] input_data_split;
 
 logic [DATA_SIZE-1:0] concatout [0:NO_REG - 1];
+
+
+Concatenator uut(.clk(clk),.rst(rst),.input_data_split(input_data_split),.full(full),.concatout(concatout));
 
 
 
@@ -50,11 +53,39 @@ rst = 1;
 #10;
 
 
-//VERIFY FILLING OF EACH STORAGE ELEMENT WITH ADDR INCREMENT
+//VERIFY FILLING OF EACH STORAGE ELEMENT WITH ADDR INCREMENT  
 
 rst = 0;
 
+input_data_split = $urandom();
 
+@(posedge clk);
+
+for (int i = 0; i<NO_REG -1 ;i++ ) begin
+
+input_data_split = input_data_split + i;
+@(posedge clk);
+end
+
+@(posedge clk);
+
+
+//VERIFYING IF FULL CONDITIONAL AND ASSERTION
+//wait until the buffer is full
+wait(full == 1);
+
+//reset and start counting again
+#90;
+
+rst = 1;
+
+#10;
+
+rst = 0;
+
+input_data_split = 8'h7;
+
+wait(full == 1);
 
 
 
