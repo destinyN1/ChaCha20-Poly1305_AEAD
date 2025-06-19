@@ -2,24 +2,50 @@
 
 A complete SystemVerilog-based ASIC implementation of the ChaCha20-Poly1305 AEAD cryptographic system following the full RTL-to-GDSII design flow. This project targets a manufacturable silicon chip optimized for high-performance encryption with minimal area, power consumption, and heat generation.
 
-## Project Status: 🚧 RTL Design & Verification Phase
+## Project Status: 🚧 ChaCha20 RTL Design & Verification Phase
 
-**Current Phase**: RTL Implementation & Comprehensive Verification  
-**Ultimate Goal**: Manufacturable ChaCha20-Poly1305 AEAD cryptographic processor in silicon  
-**Target Process**: Advanced FinFET node (7nm/5nm) for maximum performance density
+**Current Focus**: Complete ChaCha20 cipher implementation through physical design  
+**Primary Goal**: Full RTL-to-GDSII experience on ChaCha20 core  
+**Ultimate Target**: Manufacturable ChaCha20-Poly1305 AEAD cryptographic processor in silicon
 
-## Overview
+## Project Strategy & Implementation Plan
 
-ChaCha20 is a modern stream cipher designed by Daniel J. Bernstein, offering strong security, high performance, and simple design. When paired with Poly1305 for message authentication, it forms the ChaCha20-Poly1305 AEAD scheme widely used in internet protocols like TLS and SSH.
+### ChaCha20-First Approach
+**Primary Development Focus**: Complete ChaCha20 cipher through physical design phase
+- **Rationale**: Maximize ASIC design flow exposure on single, well-understood component
+- **Learning Objective**: Gain hands-on experience with synthesis, placement, routing, and signoff
+- **Scope**: RTL verification → Logic synthesis → Physical design → Signal integrity analysis
+- **Benefit**: Deep understanding of complete ASIC flow before expanding system complexity
+
+### Poly1305 Implementation Strategy
+**Future Development Options**:
+1. **Integrated Approach**: Implement Poly1305 within same silicon die after ChaCha20 completion
+2. **Separate Silicon Strategy**: Develop Poly1305 as independent ASIC with inter-chip connectivity
+   - Separate die allows independent optimization of each algorithm
+   - Reduces initial complexity while maintaining system-level AEAD capability
+   - Enables parallel development streams for different algorithm characteristics
+
+### Implementation Decision Timeline
+- **Phase 1-3**: Focus exclusively on ChaCha20 RTL through physical design
+- **Phase 4 Decision Point**: Evaluate integration vs. separate silicon approach based on:
+  - ChaCha20 implementation complexity and area requirements
+  - Available resources and timeline for complete AEAD system
+  - Performance requirements and inter-chip communication overhead
 
 ### Design Goals
 
-- **Silicon Implementation**: Complete RTL-to-GDSII flow targeting manufacturable ASIC
-- **High Performance**: Multi-Gbps throughput with pipelined architecture
+**ChaCha20 Implementation (Current Focus):**
+- **Complete ASIC Flow**: Full RTL-to-GDSII experience on single cipher component
+- **Silicon Implementation**: Manufacturable ChaCha20 processor targeting advanced nodes
+- **High Performance**: Multi-Gbps throughput with optimized datapath
 - **Power Efficiency**: Optimized for mobile and IoT applications
-- **Area Optimization**: Minimal silicon footprint through careful RTL design
+- **Learning Objective**: Maximum exposure to synthesis, physical design, and signoff processes
+
+**System-Level Goals (Future):**
+- **AEAD Capability**: Complete ChaCha20-Poly1305 authenticated encryption
+- **Modular Architecture**: Flexible implementation allowing separate or integrated silicon
 - **Industry Standards**: Full compliance with ASIC design practices and DFT
-- **Scalable Architecture**: Configurable for different performance/area trade-offs
+- **Scalable Design**: Configurable for different performance/area trade-offs
 
 ## Current Implementation Status
 
