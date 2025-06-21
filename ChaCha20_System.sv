@@ -22,7 +22,7 @@
 
 
 
-module ChaCha20_System(
+module ChaCha20_System  #(parameter DATA_SIZE = 8, NUM_MATRICES = 1, NO_REG = 64 * NUM_MATRICES  )(
 
 input logic clk, rst,
    //inputs that are needed to form the chacha matrix
@@ -49,11 +49,34 @@ input logic clk, rst,
     word_t SerialOut;
     logic  validS;
     logic load_enable;
+    
+    
+    // XOR SIGNALS
+    logic XOR_READY;
+    logic [DATA_SIZE-1:0] char_in [0:NO_REG -1];
+    logic [DATA_SIZE-1:0]  Ciphertext [0:NO_REG-1];
+
+    
+    
+    //Concatenator and Serialiser signals
+    
+    //C signals
+    logic [DATA_SIZE-1:0] input_data_split;
+    logic [DATA_SIZE-1:0]    concatout [0:NO_REG-1];
+    
+    
+    //Plain Text signals
+    logic write_en, read_en;
+    logic [DATA_SIZE-1:0] char_out [0:NO_REG -1];
+    logic [7:0] char_in_PT;
 ;
     
- Block_Function BF (.serial_enable(load_enable),.clk(clk), .rst(rst), .Key(Key), .Nonce(Nonce), .Constant(Constant), .Block(Block), .MatrixOut(MatrixOutBF), .blocksproduced(blocksproduced));   
- Block_Counter BC (.clk(clk), .init(rst) , .blocksproduced(blocksproduced), . Block(Block));
- Serialiser S (.clk(clk),.rst(rst), .indata(MatrixOutBF),.validS(validS),.outdata(SerialOut),.load_enable(load_enable));   
+ Block_Function Block_Function (.serial_enable(load_enable),.clk(clk), .rst(rst), .Key(Key), .Nonce(Nonce), .Constant(Constant), .Block(Block), .MatrixOut(MatrixOutBF), .blocksproduced(blocksproduced));   
+ Block_Counter Block_Counter (.clk(clk), .init(rst) , .blocksproduced(blocksproduced), . Block(Block));
+ Serialiser Serialiser (.clk(clk),.rst(rst), .indata(MatrixOutBF),.validS(validS),.outdata(SerialOut),.load_enable(load_enable)); 
+ XOR_module Xor_Module (.clk(clk), .XOR_READY(XOR_READY),.char_in(char_out),.Ciphertext(Ciphertext),.concatout(concatout));  
+ Concatenator Concatenator (.clk(clk), .rst(rst),.input_data_split(SerialOut),.concatout(concatout) );
+ Plain_Text Plain_Text (.rst(rst),.clk(clk), .XOR_READY(XOR_READY),.char_out(char_out),.char_in_PT(char_in_PT));
     
-    
+     
 endmodule

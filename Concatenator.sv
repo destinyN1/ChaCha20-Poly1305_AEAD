@@ -23,11 +23,12 @@
 
 
 
+typedef logic [31:0] word_t;
 
 //WILL MAKE THIS A SYNCHRONOUS BUFFER
 //DATA_SIZE = 8 bits, THIS IS THE SIZE OF OUR INPUT COMING FROM THE SERIALISER
 //NO_REG = 64 * NO_MATRICES, LETS US SPECIFY HOW MANY SERIALISED STATE MATRICES WE CAN STORE
-module Concatenator #(parameter DATA_SIZE = 8, NUM_MATRICES = 20, NO_REG = 64 * NUM_MATRICES  ) 
+module Concatenator #(parameter DATA_SIZE = 8, NUM_MATRICES = 1, NO_REG = 64 * NUM_MATRICES  ) 
 
 (
 
@@ -37,7 +38,7 @@ input logic [DATA_SIZE-1:0] input_data_split,
 
  input logic rst,
 
-output logic full,
+output logic full, // needs to be an asynchronous signal
 
 
 output logic [DATA_SIZE-1:0]    concatout [0:NO_REG-1]  // Array output //X then Y 
@@ -73,7 +74,7 @@ state_t CS,NS;
  always_ff @(posedge clk) begin
   
   
-   if (rst) begin
+   if (rst || concat_en) begin
    
    //SET THE ADDRESS TO ZERO AND CLEAR STORAGE ON RST
    
@@ -85,7 +86,6 @@ state_t CS,NS;
     storage[i] <= '0;
     
     end
-   full <= 0;
   
    CURR_input_data_split <= input_data_split;
    PREV_input_data_split <= '0; //might be a very particular edge case where input_data_split is zero so need to add some logic to account for this
@@ -95,7 +95,6 @@ state_t CS,NS;
    // need to add a condition here to check if the last inputr value changed, only execute the following statement if so
    else if ((write_addr <= NO_REG -1)  ) begin //&& concat_en == 1 
    
-    full <= 0;
     CURR_input_data_split <= input_data_split;
 
     
@@ -109,7 +108,6 @@ state_t CS,NS;
 
        end
      else begin
-      full <= 1;
       write_addr <= 0;
       PREV_input_data_split <= 0;
       
@@ -119,14 +117,7 @@ state_t CS,NS;
       
     end
     end
-    
-   // end
-    
-    //MAYBE RESET WRITE_ADDR HERE TOO NOT SURE
- 
-    
-    
-
+  
 always_comb begin
 
 if (full == 1) begin
@@ -146,8 +137,19 @@ end
 end
         
 
+always_latch begin 
+   
+           
+if (!(write_addr <= NO_REG -1)) begin
 
-        
+full = 1;
+
+end
+else if((write_addr <= NO_REG -1)|| rst == 1) begin 
+
+full = 0;
+end
+end
         
    
   
