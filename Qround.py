@@ -346,5 +346,5 @@ def test_vector_validation(verbose=False):
 
 if __name__ == "__main__":
     # Run with verbose=True to see detailed output
-    test_vector_validation(verbose=True)
-   # test_first_two_rounds()
+    #test_vector_validation(verbose=True)
+    test_first_two_rounds()

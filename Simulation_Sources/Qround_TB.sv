@@ -8,7 +8,7 @@ module Q0_Q7_Test_TB;
     logic blockready;
     logic [3:0] blocksproduced;
     
-    typedef enum {IDLE, S0, S1, S2, S3, S4, S5, S6, S7} ARXSTATE;
+    typedef enum {IDLE, S0, S1, S2, S3, S4, S5, S6, S7,S8,S9,S10,S11,S12} ARXSTATE;
     typedef enum { Q0, Q1, Q2, Q3, Q4, Q5, Q6, Q7} QSTATE;
 
     
@@ -73,7 +73,7 @@ module Q0_Q7_Test_TB;
     endtask
     
      task print_tempQ0Q7_matrix();
-        $display("Temp Matrix:");
+        $display("Temp MatrixQ4Q7:");
         for (int i = 0; i < 4; i++) begin
             $write("Row %0d: ", i);
             for(int j = 0; j < 4; j++) begin
@@ -194,7 +194,7 @@ endtask
         SSTEP = 0;
         
         // SIMULATED FSM
-        while(SSTEP < 8) begin
+        while(SSTEP < 13) begin
             @(posedge clk);
             
             stepper(test_a, test_b, test_c, test_d, exp_a, exp_b, exp_c, exp_d);
@@ -241,75 +241,91 @@ endtask
         
         case(uut.Currstep) 
             IDLE: begin
-                // IDLE STATE SO DO NOTHING
-                $display("IN IDLE ");
-            end
-            
-            S0: begin
-                $display("IN S0 STATE");     
-                temp_a = temp_a + temp_b;
-                temp_d = temp_d ^ temp_a; 
-//                $display("  After S0:  temp_a = %08h, temp_d = %08h", temp_a, temp_d);
-                
-                
-//                print_input_matrix();
+                // IDLE STATE SO DO NOTHING      //                print_input_matrix();
 //                 print_temp_matrix();
 //                 print_tempQ0Q7_matrix();
+            
+                $display("IN IDLE ");
+            end
+     
+            S0: begin
+           //$display("IN S0 STATE");     
+
+                temp_a <= temp_a +temp_b;    
+                end
                 
-            end
-            
-            S1: begin
-                $display("IN S1 STATE");
-                temp_c = temp_c + temp_d;
-                temp_d = {temp_d[15:0], temp_d[31:16]}; // ROL 16     
-//                $display("  After S1:  temp_c = %08h, temp_d = %08h", temp_c, temp_d);
-            end
-            
-            S2: begin
-                $display("IN S2 STATE");      
-                temp_b = temp_b ^ temp_c;
-                temp_d = temp_d ^ temp_a;
-//                $display("  After S2:  temp_b = %08h, temp_d = %08h", temp_b, temp_d);
-            end
-            
-            S3: begin
-                $display("IN S3 STATE");      
-                temp_b = {temp_b[19:0], temp_b[31:20]}; // ROL 12
-                temp_d = {temp_d[15:0], temp_d[31:16]}; // ROL 16
-//                $display("  After S3:  temp_b = %08h, temp_d = %08h", temp_b, temp_d);  
-            end
-            
-            S4: begin
-                $display("IN S4 STATE");      
-                temp_a = temp_a + temp_b;
-                temp_d = {temp_d[23:0], temp_d[31:24]}; // ROL 8
-//                $display("  After S4:  temp_a = %08h, temp_d = %08h", temp_a, temp_d);  
-            end
-            
-            S5: begin
-               $display("IN S5 STATE");  
-                temp_c = temp_c + temp_d;
-                temp_d = {temp_d[24:0], temp_d[31:25]}; // ROL 7              
-//                $display("  After S5:  temp_c = %08h, temp_d = %08h", temp_c, temp_d);  
-            end
-            
-            S6: begin
-                $display("IN S6 STATE");      
-                temp_b = temp_b ^ temp_c;
-//                $display("  After S6:  temp_b = %08h", temp_b);  
-            end
-            
-            S7: begin
-           $display("IN S7 STATE, DO NOTHING");      
+                S1: begin
+               // $display("IN S1 STATE");     
+
+                temp_d = temp_d ^ temp_a;   
+                end   
                 
-//               if(uut.CurrQ == Q3) begin
-                print_temp_matrix();
-//               print_tempQ0Q7_matrix();
-                    
-//                   end
-                    
-            end
-        endcase   
+                S2: begin
+               // $display("IN S2 STATE");
+                temp_d <= {temp_d[15:0],temp_d[31:16]};    
+                end
+                
+                S3: begin
+               // $display("IN S3 STATE");
+                 temp_c <= temp_c + temp_d; 
+                end
+                
+                S4: begin
+              //  $display("IN S4 STATE");
+                 temp_b = temp_c ^temp_b;  
+                end
+                
+                S5: begin
+              //  $display("IN S5 STATE");
+                 temp_b <= {temp_b[19:0],temp_b[31:20]};   
+                end
+                
+                S6: begin
+              //  $display("IN S6 STATE");
+                  temp_a <= temp_a + temp_b;
+                end   
+             
+                S7: begin
+             //   $display("IN S7 STATE");    
+                  temp_d <= temp_d ^ temp_a;  
+                end
+                
+                S8: begin
+              //  $display("IN S8 STATE");    
+                   temp_d <= {temp_d[23:0],temp_d[31:24]};
+                end
+                S9: begin
+             //   $display("IN S9 STATE");   
+                temp_c <= temp_c + temp_d; 
+                end
+                S10: begin
+             //   $display("IN S10 STATE"); 
+                temp_b <= temp_b ^ temp_c;   
+                end
+                S11: begin
+             //   $display("IN S11 STATE"); 
+                temp_b <= {temp_b[24:0],temp_b[31:25]};   
+                end
+               S12: begin
+             //  $display("IN S12 DO NOTIHING");
+               
+               
+               //$display("INPUT MATRIX \n");        
+             //   print_input_matrix();
+               
+              @(posedge clk);
+                  if(uut.CurrQ inside {Q0, Q1, Q2, Q3}) begin 
+        $display("TEMP MATRIX \n");    
+        print_temp_matrix();    
+      end
+       else if (uut.CurrQ inside {Q4, Q5, Q6, Q7}) begin
+        print_tempQ0Q7_matrix();
+    end
+    end
+          
+                
+                
+            endcase
         
         exp_a = temp_a; 
         exp_b = temp_b; 
@@ -344,14 +360,8 @@ endtask
     $display("In Q%0d \n",QSTEP);    
     
     
-    $display("INPUT MATRIX \n");        
-                print_input_matrix();
-                #5;
-          $display("TEMP MATRIX \n");    
-                print_temp_matrix();    
-
     
-    $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);    
+    
 
    end
     Q1:begin 
@@ -361,17 +371,12 @@ endtask
         testq_d = chachamatrixIN[3][1];  
         $display("In Q%0d \n",QSTEP); 
           
-        $display("INPUT MATRIX \n");        
-        print_input_matrix();
-                
-       $display("TEMP MATRIX \n");    
-       print_temp_matrix();    
-
+       
                 
                         
 
         
-        $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);    
+        
  
        end
     Q2:begin 
@@ -381,13 +386,7 @@ endtask
         testq_d = chachamatrixIN[3][2];
         $display("In Q%0d \n",QSTEP); 
           
-        $display("INPUT MATRIX \n");        
-        print_input_matrix();
-                
-        $display("TEMP MATRIX \n");    
-        print_temp_matrix();
-       
-        $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
+     
        end       
      Q3:begin 
         testq_a = chachamatrixIN[0][3];
@@ -396,13 +395,7 @@ endtask
         testq_d = chachamatrixIN[3][3];
          $display("In Q%0d \n",QSTEP); 
           
-        $display("INPUT MATRIX \n");        
-        print_input_matrix();
-                
-        $display("TEMP MATRIX \n");    
-        print_temp_matrix();
-        
-        $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
+ 
        end       
      Q4:begin 
         testq_a = uut.TEMPchachastateQ4Q7[0][0];
@@ -411,13 +404,7 @@ endtask
         testq_d = uut.TEMPchachastateQ4Q7[3][3];
         $display("In Q%0d \n",QSTEP); 
           
-        $display("TEMP MATRIX \n");        
-        print_input_matrix();
-                
-        $display("TEMPQ4Q MATRIX \n");    
-        print_tempQ0Q7_matrix();
-        
-        $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
+       
        end      
      Q5:begin 
         testq_a = uut.TEMPchachastateQ4Q7[0][1];
@@ -426,13 +413,7 @@ endtask
         testq_d = uut.TEMPchachastateQ4Q7 [3][0];
         $display("In Q%0d \n",QSTEP); 
           
-        $display("INPUT MATRIX \n");        
-        print_input_matrix();
-                
-        $display("TEMP MATRIX \n");    
-        print_tempQ0Q7_matrix();
-        
-        $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
+       
        end     
       Q6:begin 
         testq_a = uut.TEMPchachastateQ4Q7 [0][2];
@@ -441,12 +422,7 @@ endtask
         testq_d = uut.TEMPchachastateQ4Q7 [3][1];
         $display("In Q%0d \n",QSTEP); 
           
-        $display("INPUT MATRIX \n");        
-        print_input_matrix();
-                
-        $display("TEMP MATRIX \n");    
-        print_tempQ0Q7_matrix();
-        $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
+      
        end
      Q7:begin 
         testq_a = uut.TEMPchachastateQ4Q7[0][3];
@@ -455,13 +431,7 @@ endtask
         testq_d = uut.TEMPchachastateQ4Q7[3][2];
         $display("In Q%0d \n",QSTEP); 
           
-        $display("INPUT MATRIX \n");        
-        print_input_matrix();
-                
-        $display("TEMP MATRIX \n");    
-        print_tempQ0Q7_matrix();
-        
-        $display("%08h/%08h/%08h/%08h/ \n",testq_a,testq_b,testq_c,testq_d);
+       
    end
                      
     

@@ -50,7 +50,7 @@ module PerformQround
     typedef enum {Q0, Q1, Q2, Q3, Q4, Q5, Q6, Q7} Qround;
     Qround CurrQ, NextQ;
     
-    typedef enum {IDLE,S0, S1, S2, S3, S4, S5, S6, S7} stepper;
+    typedef enum {IDLE,S0, S1, S2, S3, S4, S5, S6, S7,S8,S9,S10,S11,S12} stepper;
     stepper Currstep, Nextstep;
     
     int counter;
@@ -95,7 +95,7 @@ module PerformQround
         if(setRounds) begin 
             CurrQ <= Q0;
         end
-        else if (Currstep == S7 && loadvalues == 0) begin
+        else if (Currstep == S12) begin
         CurrQ <= NextQ;
         end
      
@@ -114,42 +114,51 @@ module PerformQround
                 end
                  
                 S0: begin
-                    a <= a + b;
-                    d <= d^(a+b); 
+                a <= a +b;    
                 end
                 
                 S1: begin
-                    c <= c + d;
-                    d <= {d[15:0], d[31:16]};
+                d = d ^ a;   
                 end   
                 
                 S2: begin
-                    b <= b ^ c;
-                    d <= d ^ a;
+                d <= {d[15:0],d[31:16]};    
                 end
                 
                 S3: begin
-                    b <= {b[19:0], b[31:20]};
-                    d <= {d[15:0], d[31:16]};
+                 c <= c + d; 
                 end
                 
                 S4: begin
-                    a <= a + b;
-                    d <= {d[23:0], d[31:24]};
+                 b = c ^b;  
                 end
                 
                 S5: begin
-                    c <= c + d;
-                    d <= {d[24:0], d[31:25]};
+                 b <= {b[19:0],b[31:20]};   
                 end
                 
                 S6: begin
-                    b <= b ^ c;
+                  a <= a + b;
                 end   
              
                 S7: begin    
-                    loadvalues <= 1;
-                    
+                  d <= d ^ a;  
+                end
+                
+                S8: begin    
+                   d <= {d[23:0],d[31:24]};
+                end
+                S9: begin   
+                c <= c + d; 
+                end
+                S10: begin 
+                b <= b ^ c;   
+                end
+                S11: begin 
+                b <= {b[24:0],b[31:25]};   
+                end 
+               S12: begin
+               loadvalues <= 1;
                 end
             endcase
         end
@@ -319,7 +328,12 @@ module PerformQround
             S4: Nextstep = S5;
             S5: Nextstep = S6;
             S6: Nextstep = S7;  // Loop back to start or advance Q round
-            S7: Nextstep = IDLE;
+            S7: Nextstep = S8;
+            S8: Nextstep = S9;
+            S9: Nextstep = S10;
+            S10: Nextstep = S11;
+            S11: Nextstep = S12;
+            S12: Nextstep = IDLE;
             default: Nextstep = IDLE;
         endcase
     end
@@ -371,6 +385,9 @@ module PerformQround
             Q7: begin
                 NextQ = Q0;
             end  
+            default: begin
+        NextQ = Q0;  // Default to Q0 if unexpected value
+    end
         endcase
     
         if (counter == 20) begin
