@@ -19,25 +19,25 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-typedef logic [31:0] word_t;
+//typedef logic [31:0] word_t;
 
-module Concat_Serialiser_TOP #(parameter DATA_SIZE = 8, NUM_MATRICES = 2, NO_REG = 64 * NUM_MATRICES  )(
+module Concat_Serialiser_TOP #(parameter DATA_SIZE = 8, NUM_MATRICES = 1, NO_REG = 64 * NUM_MATRICES  )(
  
  input logic clk, rst,load_en,
  input word_t indata[3:0][3:0],
 //can maybe use this as a signal to reset the concat
  
- output logic [DATA_SIZE-1:0]    concatout [0:NO_REG-1]  // Array output //X then Y 
-
+ output logic [DATA_SIZE-1:0]    concatout [0:NO_REG-1],  // Array output //X then Y 
+ output logic full
  
  
     );
     
     logic concat_en;
     logic [7:0] outdata_split;
-    logic full;
     word_t outdata;  // Added missing signal
     logic Crst; // will reset the C when full is high
+    
 
     
  Serialiser S (
@@ -48,12 +48,13 @@ module Concat_Serialiser_TOP #(parameter DATA_SIZE = 8, NUM_MATRICES = 2, NO_REG
         .outdata(outdata),      // Added missing connection
         .validS(validS),        // Added missing connection
         .concat_en(concat_en),
+        .full(full),
         .outdata_split(outdata_split)  // Fixed: was using wrong signal name
     );  
     
      Concatenator #(
         .DATA_SIZE(8),
-        .NUM_MATRICES(2),
+        .NUM_MATRICES(1),
         .NO_REG(64*NUM_MATRICES)
     ) C (
         .clk(clk), 

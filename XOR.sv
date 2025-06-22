@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module XOR #(parameter DATA_SIZE = 8, NUM_MATRICES = 3, NO_REG = 64 * NUM_MATRICES  )(
+module XOR_module #(parameter DATA_SIZE = 8, NUM_MATRICES = 1, NO_REG = 64 * NUM_MATRICES  )(
 
 input logic clk,XOR_READY,
 
@@ -31,13 +31,13 @@ output logic [DATA_SIZE-1:0]  Ciphertext [0:NO_REG-1]
 
     );
     
-   always_ff @(posedge clk) begin
+   always_comb  begin
    
    if (XOR_READY) begin
    
    for(int i = 0; i<NO_REG; i++) begin
    
-   Ciphertext[i] <= char_in[i] ^ concatout[i];
+   Ciphertext[i] = char_in[i] ^ concatout[i];
    
    end
    end

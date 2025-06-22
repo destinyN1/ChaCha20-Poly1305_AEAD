@@ -4,11 +4,14 @@
 // Define word_t if not defined elsewhere
 //typedef logic [31:0] word_t;
 
-module Concat_Serialiser_TOP_TB;
+module Concat_Serialiser_TOP_TB(
+
+input logic full
+);
 
     // Parameters matching the DUT
     parameter DATA_SIZE = 8;
-    parameter NUM_MATRICES = 2;
+    parameter NUM_MATRICES = 1;
     parameter NO_REG = 64 * NUM_MATRICES;
     
     // Testbench signals
@@ -32,7 +35,8 @@ module Concat_Serialiser_TOP_TB;
         .rst(rst),
         .load_en(load_en),
         .indata(indata),
-        .concatout(concatout)
+        .concatout(concatout),
+        .full(full)
     );
     
     
@@ -71,6 +75,15 @@ module Concat_Serialiser_TOP_TB;
     
     
     #1000;
+    
+    wait (dut.full == 1);
+    
+    
+    rst = 1;
+    
+    #100;
+    
+    
     
     
     
