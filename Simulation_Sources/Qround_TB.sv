@@ -140,7 +140,7 @@ endtask
 //        end
         
         @(posedge clk);
-        @(posedge clk);
+       // @(posedge clk);
         setRounds = 0;
         
 //        $display("Matrix with filled in Values:");
@@ -199,7 +199,7 @@ endtask
             
             stepper(test_a, test_b, test_c, test_d, exp_a, exp_b, exp_c, exp_d);
             
-            #5;
+          //#5;
             
 //            if(((exp_a == uut.a) && (exp_b == uut.b)) && ((exp_c == uut.c) && (exp_d == uut.d))) begin
 //                $display("S%0d PASS \n UUT.A/EXP_A = %08h/%08h \n UUT.B/EXP_B = %08h/%08h \n UUT.C/EXP_C = %08h/%08h \n UUT.D/EXP_D = %08h/%08h \n ", 
@@ -245,7 +245,7 @@ endtask
 //                 print_temp_matrix();
 //                 print_tempQ0Q7_matrix();
             
-                $display("IN IDLE ");
+           //     $display("IN IDLE ");
             end
      
             S0: begin
@@ -310,18 +310,27 @@ endtask
              //  $display("IN S12 DO NOTIHING");
                
                
-               //$display("INPUT MATRIX \n");        
-             //   print_input_matrix();
                
-              @(posedge clk);
+               
+             if(uut.CurrQ inside {Q0, Q1, Q2, Q3,Q4,Q5,Q6}) begin 
+             
+               #5; //keep this value as this is the one that works the best
+           //  @(posedge clk); 
                   if(uut.CurrQ inside {Q0, Q1, Q2, Q3}) begin 
         $display("TEMP MATRIX \n");    
         print_temp_matrix();    
       end
-       else if (uut.CurrQ inside {Q4, Q5, Q6, Q7}) begin
+       else begin //if (uut.CurrQ inside {Q4, Q5, Q6, Q7}) begin
         print_tempQ0Q7_matrix();
     end
+     //  #5;
+     end
+     else begin 
+     #5;
+     print_tempQ0Q7_matrix();
+     end
     end
+    
           
                 
                 

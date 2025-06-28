@@ -70,16 +70,13 @@ module PerformQround
         else begin      
             Currstep <= Nextstep;
             
-            if(CurrQ == Q3) begin  
-               TEMPchachastateQ4Q7 <= TEMPpchachastate;
-        end   
             
-            if(CurrQ == Q7) begin
+            
+            if((CurrQ == Q7)&& (Currstep == S12)) begin
                 counter <= counter + 1;
-                loadvalues <= 1;
                 
             end
-            else if(counter == 20) begin
+            else if(counter == 10) begin
                 counter <= 0;
                 blocksproduced = blocksproduced + 1;
             end
@@ -159,6 +156,8 @@ module PerformQround
                 end 
                S12: begin
                loadvalues <= 1;
+                
+                
                 end
             endcase
         end
@@ -339,6 +338,11 @@ module PerformQround
     end
     
     
+    always_latch begin
+        if(CurrQ == Q4) begin  
+               TEMPchachastateQ4Q7 = TEMPpchachastate;
+        end   
+        end
     
     //CHANGE THIS FILL MATRIX STATEMENT INTO AN FF BLOCK EVENTUALLY 
     //Comb logic for moving to various Q rounds
