@@ -33,6 +33,7 @@ module PerformQround
 );
     //intermediate value held for calculations and initial value held for adding at the end
     word_t INITchachastate [3:0][3:0];
+    word_t INITINITchachastate [3:0][3:0];
     
     //temp matrix to hold values for Qround 0 - 3
     word_t TEMPpchachastate [3:0][3:0];
@@ -163,12 +164,14 @@ module PerformQround
         end
         //end
         else begin 
+            if (counter == 0) begin
+            
             case(CurrQ)
                 Q0: begin
-                    a <= chachamatrixIN[0][0];
-                    b <= chachamatrixIN[1][0];
-                    c <= chachamatrixIN[2][0];
-                    d <= chachamatrixIN[3][0];
+                    a <= INITINITchachastate[0][0];
+                    b <= INITINITchachastate[1][0];
+                    c <= INITINITchachastate[2][0];
+                    d <= INITINITchachastate[3][0];
                     loadvalues <= 0;
                    // assignnew <=1;
                     
@@ -176,26 +179,26 @@ module PerformQround
                 end 
              
                 Q1: begin
-                    a <= chachamatrixIN[0][1];
-                    b <= chachamatrixIN[1][1];
-                    c <= chachamatrixIN[2][1];
-                    d <= chachamatrixIN[3][1];
+                    a <= INITINITchachastate[0][1];
+                    b <= INITINITchachastate[1][1];
+                    c <= INITINITchachastate[2][1];
+                    d <= INITINITchachastate[3][1];
                     loadvalues <= 0;
                 end 
           
                 Q2: begin
-                    a <= chachamatrixIN[0][2];
-                    b <= chachamatrixIN[1][2];
-                    c <= chachamatrixIN[2][2];
-                    d <= chachamatrixIN[3][2];
+                    a <= INITINITchachastate[0][2];
+                    b <= INITINITchachastate[1][2];
+                    c <= INITINITchachastate[2][2];
+                    d <= INITINITchachastate[3][2];
                     loadvalues <= 0;
                 end 
           
                 Q3: begin
-                    a <= chachamatrixIN[0][3];
-                    b <= chachamatrixIN[1][3];
-                    c <= chachamatrixIN[2][3];
-                    d <= chachamatrixIN[3][3];
+                    a <= INITINITchachastate[0][3];
+                    b <= INITINITchachastate[1][3];
+                    c <= INITINITchachastate[2][3];
+                    d <= INITINITchachastate[3][3];
                     loadvalues <= 0;
                     
                  
@@ -232,8 +235,88 @@ module PerformQround
                     c <=TEMPchachastateQ4Q7[2][1];
                     d <=TEMPchachastateQ4Q7[3][2];
                     loadvalues <= 0;
-                end  
+                end 
+                 
+                
             endcase    
+        end
+        //logic for ARX ops after first set of Qrounds
+        else if ((counter > 0) && (counter <= 10)) begin
+        
+            case(CurrQ)
+                Q0: begin
+                    a <= INITchachastate[0][0];
+                    b <= INITchachastate[1][0];
+                    c <= INITchachastate[2][0];
+                    d <= INITchachastate[3][0];
+                    loadvalues <= 0;
+                   // assignnew <=1;
+                    
+
+                end 
+             
+                Q1: begin
+                    a <= INITchachastate[0][1];
+                    b <= INITchachastate[1][1];
+                    c <= INITchachastate[2][1];
+                    d <= INITchachastate[3][1];
+                    loadvalues <= 0;
+                end 
+          
+                Q2: begin
+                    a <= INITchachastate[0][2];
+                    b <= INITchachastate[1][2];
+                    c <= INITchachastate[2][2];
+                    d <= INITchachastate[3][2];
+                    loadvalues <= 0;
+                end 
+          
+                Q3: begin
+                    a <= INITchachastate[0][3];
+                    b <= INITchachastate[1][3];
+                    c <= INITchachastate[2][3];
+                    d <= INITchachastate[3][3];
+                    loadvalues <= 0;
+                    
+                 
+                end 
+          
+                Q4: begin
+                //From Q4 and onwards use new values
+                    a <=TEMPchachastateQ4Q7[0][0];
+                    b <=TEMPchachastateQ4Q7[1][1];
+                    c <=TEMPchachastateQ4Q7[2][2];
+                    d <=TEMPchachastateQ4Q7[3][3];
+                    loadvalues <= 0;
+                end 
+          
+                Q5: begin
+                    a <=TEMPchachastateQ4Q7[0][1];
+                    b <=TEMPchachastateQ4Q7[1][2];
+                    c <=TEMPchachastateQ4Q7[2][3];
+                    d <=TEMPchachastateQ4Q7[3][0];
+                    loadvalues <= 0;
+                end 
+          
+                Q6: begin
+                    a <=TEMPchachastateQ4Q7[0][2];
+                    b <=TEMPchachastateQ4Q7[1][3];
+                    c <=TEMPchachastateQ4Q7[2][0];
+                    d <=TEMPchachastateQ4Q7[3][1];
+                    loadvalues <= 0;
+                end
+          
+                Q7: begin
+                    a <=TEMPchachastateQ4Q7[0][3];
+                    b <=TEMPchachastateQ4Q7[1][0];
+                    c <=TEMPchachastateQ4Q7[2][1];
+                    d <=TEMPchachastateQ4Q7[3][2];
+                    loadvalues <= 0;
+                end 
+                endcase
+        
+        end
+        
         end
     end
     
@@ -252,6 +335,8 @@ module PerformQround
     
     always_ff @(posedge clk) begin
     
+        if (counter == 0) begin
+        
         case (CurrQ) 
             Q0: begin
                 TEMPpchachastate[0][0] <= a;
@@ -311,7 +396,67 @@ module PerformQround
             
         endcase
         end
-    
+        
+        else if ((counter > 0) && (counter <= 10)) begin
+        case (CurrQ) 
+            Q0: begin
+                INITchachastate[0][0] <= a;
+                INITchachastate[1][0] <= b;
+                INITchachastate[2][0] <= c;
+                INITchachastate[3][0] <= d;
+            end
+            
+            Q1: begin
+                INITchachastate[0][1] <= a;
+                INITchachastate[1][1] <= b;
+                INITchachastate[2][1] <= c;
+                INITchachastate[3][1] <= d;
+            end
+            
+            Q2: begin
+                INITchachastate[0][2] <= a;
+                INITchachastate[1][2] <= b;
+                INITchachastate[2][2] <= c;
+                INITchachastate[3][2] <= d;
+            end
+            
+            Q3: begin
+                INITchachastate[0][3] <= a;
+                INITchachastate[1][3] <= b;
+                INITchachastate[2][3] <= c;
+                INITchachastate[3][3] <= d;
+            end
+            
+            Q4: begin
+                TEMPchachastateQ4Q7[0][0] <= a;
+                TEMPchachastateQ4Q7[1][1] <= b;
+                TEMPchachastateQ4Q7[2][2] <= c;
+                TEMPchachastateQ4Q7[3][3] <= d;
+            end
+            
+            Q5: begin
+                TEMPchachastateQ4Q7[0][1] <= a;
+                TEMPchachastateQ4Q7[1][2] <= b;
+                TEMPchachastateQ4Q7[2][3] <= c;
+                TEMPchachastateQ4Q7[3][0] <= d;
+            end
+            
+            Q6: begin
+                TEMPchachastateQ4Q7[0][2] <= a;
+                TEMPchachastateQ4Q7[1][3] <= b;
+                TEMPchachastateQ4Q7[2][0] <= c;
+                TEMPchachastateQ4Q7[3][1] <= d;
+            end
+            
+            Q7: begin
+                TEMPchachastateQ4Q7[0][3] <= a;
+                TEMPchachastateQ4Q7[1][0] <= b;
+                TEMPchachastateQ4Q7[2][1] <= c;
+                TEMPchachastateQ4Q7[3][2] <= d;       
+        end
+        endcase
+        end
+  end  
     // Next step logic
     always_comb begin
         Nextstep = Currstep;
@@ -337,21 +482,42 @@ module PerformQround
         endcase
     end
     
-    
+    //handles cases where errors pop up
     always_latch begin
-        if(CurrQ == Q4) begin  
+        if((CurrQ == Q4) && (counter == 0)) begin  
                TEMPchachastateQ4Q7 = TEMPpchachastate;
-        end   
         end
+        else if (((CurrQ == Q4) && ((counter > 0)&&(counter <= 10)))) begin
+         
+         TEMPchachastateQ4Q7 = INITchachastate;
+        end
+        
+        //copy values from Q4Q7 matrix to the temp so it can be used at the beginning of the new Qround
+        if(((CurrQ == Q0) && (Currstep == IDLE )) && ((counter > 0) && (counter <= 10)) ) begin
+        
+        INITchachastate = TEMPchachastateQ4Q7;
+        
+        
+        end
+        //copy input matrix into temp matrix at the very start of the system
+        else if (((CurrQ == Q0) && (Currstep == IDLE )) && (counter == 0 )) begin
+            
+            INITINITchachastate = chachamatrixIN;
+               
+        end
+        
+        
+        end
+        
     
     //CHANGE THIS FILL MATRIX STATEMENT INTO AN FF BLOCK EVENTUALLY 
     //Comb logic for moving to various Q rounds
     always_comb begin
-        for (int x = 0; x < 4; x++) begin
-            for (int y = 0; y < 4; y++) begin
-                INITchachastate[x][y] =chachamatrixIN[x][y];
-            end
-        end
+//        for (int x = 0; x < 4; x++) begin
+//            for (int y = 0; y < 4; y++) begin
+//                INITINITchachastate[x][y] =chachamatrixIN[x][y];
+//            end
+//        end
         
         
         
@@ -394,10 +560,10 @@ module PerformQround
     end
         endcase
     
-        if (counter == 20) begin
+        if (counter == 10) begin
             for (int x = 0; x < 4; x++) begin
                 for (int y = 0; y < 4; y++) begin
-                    chachamatrixOUT[x][y] = INITchachastate[x][y] + TEMPchachastateQ4Q7[x][y];
+                    chachamatrixOUT[x][y] = INITINITchachastate[x][y] + TEMPchachastateQ4Q7[x][y];
                     blockready = 1;
                 end
             end

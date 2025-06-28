@@ -38,13 +38,7 @@ module Q0_Q7_Test_TB;
         .blocksproduced(blocksproduced)
     );
     
-    // Reference Values for step by step verification
-    
-    
-    //function that will perform Qrounds
-    
-    
-    
+
     
     // Function that will print the inputmatrix
     task print_input_matrix();
@@ -126,36 +120,12 @@ endtask
         #10;
         print_input_matrix();        
         
-        //Essentially Q0
-//        chachamatrixIN[0][0] = test_a;
-//        chachamatrixIN[1][0] = test_b; 
-//        chachamatrixIN[2][0] = test_c;
-//        chachamatrixIN[3][0] = test_d;    
-        
-        // Fill in the test matrix with dont care values
-//        for (int x = 0; x < 4; x++) begin
-//            for(int y = 1; y < 4; y++) begin
-//                chachamatrixIN[x][y] = 32'h00000000;
-//            end
-//        end
-        
+ 
         @(posedge clk);
        // @(posedge clk);
         setRounds = 0;
         
-//        $display("Matrix with filled in Values:");
-//        for (int i = 0; i < 4; i++) begin
-//            $write("Row %0d: ", i);
-//            for(int j = 0; j < 4; j++) begin
-//                $write("%08h ", chachamatrixIN[i][j]);
-//            end
-//            $write("\n");
-//        end
-//        $display(""); // Add blank line  
-        
-        //need to write a sort of a while loop that will call calc_step() and then move to the next Qround
-        //will write a function that moves to next Qround
-           
+
        QSTEP = 0;
 
        while( QSTEP <8) begin
@@ -199,18 +169,7 @@ endtask
             
             stepper(test_a, test_b, test_c, test_d, exp_a, exp_b, exp_c, exp_d);
             
-          //#5;
-            
-//            if(((exp_a == uut.a) && (exp_b == uut.b)) && ((exp_c == uut.c) && (exp_d == uut.d))) begin
-//                $display("S%0d PASS \n UUT.A/EXP_A = %08h/%08h \n UUT.B/EXP_B = %08h/%08h \n UUT.C/EXP_C = %08h/%08h \n UUT.D/EXP_D = %08h/%08h \n ", 
-//                         SSTEP, uut.a, exp_a, uut.b, exp_b, uut.c, exp_c, uut.d, exp_d);
-//            end
-////            else if (uut.Currstep == IDLE) begin
-////                $display("IN IDLE");
-////            end      
-//            else begin
-//                $display("S%0d FAIL \n UUT.A/EXP_A = %08h/%08h \n UUT.B/EXP_B = %08h/%08h \n UUT.C/EXP_C = %08h/%08h \n UUT.D/EXP_D = %08h/%08h \n ", 
-//                         SSTEP, uut.a, exp_a, uut.b, exp_b, uut.c, exp_c, uut.d, exp_d);            end
+
             
             test_a = exp_a;
             test_b = exp_b;
@@ -221,7 +180,6 @@ endtask
             SSTEP = SSTEP + 1;
             end
             
-            //MAYBE ADD SOME DELAY LOGIC HERE
             
         end
         SSTEP = 0;
@@ -241,11 +199,7 @@ endtask
         
         case(uut.Currstep) 
             IDLE: begin
-                // IDLE STATE SO DO NOTHING      //                print_input_matrix();
-//                 print_temp_matrix();
-//                 print_tempQ0Q7_matrix();
-            
-           //     $display("IN IDLE ");
+  
             end
      
             S0: begin
@@ -315,7 +269,6 @@ endtask
              if(uut.CurrQ inside {Q0, Q1, Q2, Q3,Q4,Q5,Q6}) begin 
              
                #5; //keep this value as this is the one that works the best
-           //  @(posedge clk); 
                   if(uut.CurrQ inside {Q0, Q1, Q2, Q3}) begin 
         $display("TEMP MATRIX \n");    
         print_temp_matrix();    
@@ -381,12 +334,7 @@ endtask
         $display("In Q%0d \n",QSTEP); 
           
        
-                
-                        
-
-        
-        
- 
+            
        end
     Q2:begin 
         testq_a = chachamatrixIN[0][2];
@@ -467,12 +415,12 @@ endtask
         
         #20;
         // Test 1: Random values
-//        $display("Test 1: Random input values");
-//        setRounds = 1;
-//        fill_matrix_random();
-//        #20;
-//        print_input_matrix();
-//        #20;
+        $display("Test 1: Random input values");
+        setRounds = 1;
+        fill_matrix_random();
+        #20;
+        print_input_matrix();
+        #20;
         
         // NOTE WHEN FILLING THE MATRIX SETROUNDS NEED TO = 1
         // ELSE KEEP LOW ALL THE TIME WHILE FSMS ARE RUNNING
