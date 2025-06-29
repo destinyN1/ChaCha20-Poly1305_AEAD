@@ -84,12 +84,77 @@ def inner_block(state):
     Qround(state, 2, 7, 8, 13) 
     Qround(state, 3, 4, 9, 14) 
 
+    print_state(state)
+
     return state
 
 def twentyrounds(state):
     """Performs 20 rounds (10 inner blocks) of ChaCha20"""
     for i in range(10): 
         inner_block(state)
+
+def twentyrounds_verbose(state):
+    """
+    Performs all 20 rounds (10 inner blocks) of ChaCha20 
+    and prints the matrix after each individual Qround operation
+    """
+    print("="*70)
+    print("PERFORMING ALL 20 ROUNDS WITH DETAILED OUTPUT")
+    print("="*70)
+    
+    print("Initial state:")
+    print_state(state)
+    print()
+    
+    # Perform 10 inner blocks (20 rounds total)
+    for block_num in range(10):
+        round_odd = (block_num * 2) + 1   # Odd round number (column rounds)
+        round_even = (block_num * 2) + 2  # Even round number (diagonal rounds)
+        
+        print(f"--- ROUND {round_odd}: COLUMN ROUNDS (Block {block_num + 1}/10) ---")
+        
+        print(f"After Qround(0, 4, 8, 12) - Round {round_odd}:")
+        Qround(state, 0, 4, 8, 12)
+        print_state(state)
+        
+        print(f"After Qround(1, 5, 9, 13) - Round {round_odd}:")
+        Qround(state, 1, 5, 9, 13)
+        print_state(state)
+        
+        print(f"After Qround(2, 6, 10, 14) - Round {round_odd}:")
+        Qround(state, 2, 6, 10, 14)
+        print_state(state)
+        
+        print(f"After Qround(3, 7, 11, 15) - Round {round_odd}:")
+        Qround(state, 3, 7, 11, 15)
+        print_state(state)
+        
+        print(f"--- ROUND {round_even}: DIAGONAL ROUNDS (Block {block_num + 1}/10) ---")
+        
+        print(f"After Qround(0, 5, 10, 15) - Round {round_even}:")
+        Qround(state, 0, 5, 10, 15)
+        print_state(state)
+        
+        print(f"After Qround(1, 6, 11, 12) - Round {round_even}:")
+        Qround(state, 1, 6, 11, 12)
+        print_state(state)
+        
+        print(f"After Qround(2, 7, 8, 13) - Round {round_even}:")
+        Qround(state, 2, 7, 8, 13)
+        print_state(state)
+        
+        print(f"After Qround(3, 4, 9, 14) - Round {round_even}:")
+        Qround(state, 3, 4, 9, 14)
+        print_state(state)
+        
+        print(f">>> COMPLETED ROUNDS {round_odd}-{round_even} (Block {block_num + 1}/10) <<<")
+        print()
+    
+    print("="*70)
+    print("ALL 20 ROUNDS COMPLETED")
+    print("="*70)
+    
+    return state
 
 # ============================================================================
 # HELPER FUNCTIONS
@@ -163,7 +228,18 @@ def test_first_two_rounds():
     del state
     gc.collect()
 
-
+def test_all_twenty_rounds():
+    """Test function to run all 20 rounds with verbose output"""
+    # Initialize state with test vector
+    state = []
+    fill_state_with_test_vector(state)
+    
+    # Run all 20 rounds with verbose output
+    twentyrounds_verbose(state)
+    
+    # Clean up
+    del state
+    gc.collect()
 
 def first_two_rounds_verbose(state):
     """
@@ -221,7 +297,6 @@ def first_two_rounds_verbose(state):
     print("="*60)
     
     return state
-
 
 def compare_with_expected(state, verbose=False):
     """Compares state with expected test vector result"""
@@ -342,11 +417,67 @@ def test_vector_validation(verbose=False):
     
     return overall_result
 
+def test_vector_validation_verbose():
+    """
+    Complete ChaCha20 test vector validation with verbose 20-round output.
+    """
+    print("="*70)
+    print("CHACHA20 TEST VECTOR VALIDATION WITH VERBOSE OUTPUT")
+    print("="*70)
+    
+    # Initialize and fill with test vector
+    state = []
+    fill_state_with_test_vector(state)
+    
+    # Save initial state and run 20 rounds with verbose output
+    initial_state = copy_state(state)
+    twentyrounds_verbose(state)
+    
+    # Test after 20 rounds
+    test1_result = compare_with_expected(state, verbose=True)
+    
+    # Add initial state and test final result
+    final_state = copy_state(state)
+    added_state = add_initial_to_final(initial_state, final_state)
+    
+    print_state(added_state, "Final added state")
+    
+    test2_result = compare_with_expected_added_state(added_state, verbose=True)
+    
+    # Final results
+    overall_result = test1_result and test2_result
+    print("="*70)
+    
+    if overall_result:
+        print("*** CHACHA20 VERBOSE VALIDATION: SUCCESS ***")
+    else:
+        print("*** CHACHA20 VERBOSE VALIDATION: FAILED ***")
+        if not test1_result:
+            print("  - 20-round test failed")
+        if not test2_result:
+            print("  - Final state test failed")
+    
+    print("="*70)
+    
+    # Memory cleanup
+    del state, initial_state, final_state, added_state
+    gc.collect()
+    
+    return overall_result
+
 # ============================================================================
 # MAIN EXECUTION
 # ============================================================================
 
 if __name__ == "__main__":
-    # Run with verbose=True to see detailed output
-    #test_vector_validation(verbose=True)
-    test_first_two_rounds()
+    # Run the new verbose validation with all 20 rounds
+   # test_vector_validation_verbose()
+    
+    # Uncomment below to run just the verbose 20 rounds without validation
+    # test_all_twenty_rounds()
+    
+    # Uncomment below to run the original validation (non-verbose)
+     test_vector_validation(verbose=True)
+    
+    # Uncomment below to run just the first two rounds
+    # test_first_two_rounds()

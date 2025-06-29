@@ -133,7 +133,7 @@ endtask
         //tracks what round we are on, goes in steps of 2 rounds
        Round_step = 1; //starting from one here to make it easier to match with how its done in python
        
-       while (Round_step <= 10) begin // does 2 rounds per cycle
+      while (Round_step <= 10) begin // does 2 rounds per cycle
         
        QSTEP = 0;
 
@@ -155,7 +155,7 @@ endtask
         
       end
       QSTEP = 0;  
-      Round_step = Round_step + 1;
+     // Round_step = Round_step + 1;
       
       end
       Round_step = 0;   
@@ -280,9 +280,13 @@ endtask
                    printC0();
                                    
                end
-               else begin
+              else begin
+               setRounds = 1;
                
-               printC1();
+               #10;
+               setRounds = 0;
+               
+             //  printC1();
                end
                end
                
@@ -325,7 +329,7 @@ endtask
     testq_c = uut.INITINITchachastate[2][0];
     testq_d = uut.INITINITchachastate[3][0];
     $display("In Q%0d \n",QSTEP);    
-    $display("In Round %0d \n",Round_step);    
+   // $display("In Round %0d \n",Round_step);    
 
     
     

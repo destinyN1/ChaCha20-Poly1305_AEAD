@@ -559,8 +559,8 @@ module PerformQround
         NextQ = Q0;  // Default to Q0 if unexpected value
     end
         endcase
-    
-        if ((counter == 9) && (Currstep == S12) && (CurrQ == Q7)) begin
+    //essentially delayed by one clock from final valid operation state
+        if ((counter == 10)) begin //&& (Currstep == IDLE) && (CurrQ == Q0)) begin
             for (int x = 0; x < 4; x++) begin
                 for (int y = 0; y < 4; y++) begin
                     chachamatrixOUT[x][y] = INITINITchachastate[x][y] + TEMPchachastateQ4Q7[x][y];

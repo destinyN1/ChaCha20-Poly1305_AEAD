@@ -271,14 +271,19 @@ def save_test_output(content, filename="hw_simulation_output.txt"):
 if __name__ == "__main__":
     # If you want to test with the provided output, uncomment the following:
     test_output = """Input Matrix:
+Row 0: 48d27605 5fd105f8 1e87db6a 7816e813 
+Row 1: 7ffe2087 0f1071d4 6a2d97cd 48d0968c 
+Row 2: 6ee177cc 88b57338 40e77e9f 6edf9853 
+Row 3: 17c5e50c ab15166d b7b02ee0 86a75cd9 
+
+Test 2: Perform full 20 rounds
+Input Matrix:
 Row 0: 61707865 3320646e 79622d32 6b206574 
 Row 1: 03020100 07060504 0b0a0908 0f0e0d0c 
 Row 2: 13121110 17161514 1b1a1918 1f1e1d1c 
 Row 3: 00000001 09000000 4a000000 00000000 
 
 In Q0 
-
-TEMP MATRIX 
 
 Temp Matrix:
 Row 0: abbaa25c 3320646e 79622d32 6b206574 
@@ -288,8 +293,6 @@ Row 3: dec62ed2 09000000 4a000000 00000000
 
 In Q1 
 
-TEMP MATRIX 
-
 Temp Matrix:
 Row 0: abbaa25c 1efa51ea 79622d32 6b206574 
 Row 1: 3a465196 1c7e64f6 0b0a0908 0f0e0d0c 
@@ -297,8 +300,6 @@ Row 2: 6b3ca454 08eb14b1 1b1a1918 1f1e1d1c
 Row 3: dec62ed2 8862cc77 4a000000 00000000 
 
 In Q2 
-
-TEMP MATRIX 
 
 Temp Matrix:
 Row 0: abbaa25c 1efa51ea 7354fbdf 6b206574 
@@ -330,10 +331,10 @@ Row 1: 3a465196 5c2e187a c95eb461 f05b6976
 Row 2: 6b3ca454 08eb14b1 f1a1bdf5 761246ca 
 Row 3: 6b0d58a3 8862cc77 6e35b345 f173888d 
 
+relaunch_sim: Time (s): cpu = 00:00:00 ; elapsed = 00:00:07 . Memory (MB): peak = 4134.449 ; gain = 0.000
+run 3000 ns
 In Q6 
 
-relaunch_sim: Time (s): cpu = 00:00:01 ; elapsed = 00:00:08 . Memory (MB): peak = 1981.078 ; gain = 0.000
-run 1500 ns
 Temp MatrixQ4Q7:
 Row 0: cd52e917 85ab03b4 b3457395 83d2dc69 
 Row 1: 3a465196 5c2e187a c95eb461 316c801a 
