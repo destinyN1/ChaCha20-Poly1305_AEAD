@@ -1,9 +1,12 @@
+
+
 module Q0_Q7_Test_TB;
     // Test signals
     logic clk, setRounds;
     word_t chachamatrixIN [3:0][3:0];
     word_t chachamatrixOUT [3:0][3:0];
     
+
     
     logic blockready;
     logic [3:0] blocksproduced;
@@ -15,7 +18,7 @@ module Q0_Q7_Test_TB;
     logic [2:0] prev_currstep;
     logic [2:0] prev_currq;
       
-    
+    int Round_step; 
     int QSTEP;
     
     // Test variables
@@ -39,7 +42,8 @@ module Q0_Q7_Test_TB;
     );
     
 
-    
+        `include "C1_Tasks.svh" //include tasks for C1 verification
+
     // Function that will print the inputmatrix
     task print_input_matrix();
         $display("Input Matrix:");
@@ -125,13 +129,18 @@ endtask
        // @(posedge clk);
         setRounds = 0;
         
-
+        
+        //tracks what round we are on, goes in steps of 2 rounds
+       Round_step = 1; //starting from one here to make it easier to match with how its done in python
+       
+       while (Round_step <= 10) begin // does 2 rounds per cycle
+        
        QSTEP = 0;
 
        while( QSTEP <8) begin
        
        
-       Move_Q(test_a,test_b,test_c,test_d,exp_a,exp_b, exp_c,exp_d);
+       Move_QC0(test_a,test_b,test_c,test_d,exp_a,exp_b, exp_c,exp_d);
        
        test_a = exp_a;
        test_b = exp_b;
@@ -146,7 +155,10 @@ endtask
         
       end
       QSTEP = 0;  
-         
+      Round_step = Round_step + 1;
+      
+      end
+      Round_step = 0;   
     endtask 
     
     
@@ -263,26 +275,19 @@ endtask
                S12: begin
              //  $display("IN S12 DO NOTIHING");
                
+               if(uut.counter == 0) begin 
+                    
+                   printC0();
+                                   
+               end
+               else begin
                
+               printC1();
+               end
+               end
                
-               
-             if(uut.CurrQ inside {Q0, Q1, Q2, Q3,Q4,Q5,Q6}) begin 
-             
-               #5; //keep this value as this is the one that works the best
-                  if(uut.CurrQ inside {Q0, Q1, Q2, Q3}) begin 
-        $display("TEMP MATRIX \n");    
-        print_temp_matrix();    
-      end
-       else begin //if (uut.CurrQ inside {Q4, Q5, Q6, Q7}) begin
-        print_tempQ0Q7_matrix();
-    end
-     //  #5;
-     end
-     else begin 
-     #5;
-     print_tempQ0Q7_matrix();
-     end
-    end
+                   
+ 
     
           
                 
@@ -302,7 +307,7 @@ endtask
     
     
     
-     task Move_Q(input word_t test_a,test_b, test_c,test_d, output word_t exp_a,exp_b, exp_c,exp_d);
+     task Move_QC0(input word_t test_a,test_b, test_c,test_d, output word_t exp_a,exp_b, exp_c,exp_d);
     
     word_t testq_a,testq_b,testq_c,testq_d;
     
@@ -315,11 +320,14 @@ endtask
     case(uut.CurrQ)
     
     Q0:begin 
-    testq_a = chachamatrixIN[0][0];
-    testq_b = chachamatrixIN[1][0]; 
-    testq_c = chachamatrixIN[2][0];
-    testq_d = chachamatrixIN[3][0];
+    testq_a = uut.INITINITchachastate[0][0];
+    testq_b = uut.INITINITchachastate[1][0]; 
+    testq_c = uut.INITINITchachastate[2][0];
+    testq_d = uut.INITINITchachastate[3][0];
     $display("In Q%0d \n",QSTEP);    
+    $display("In Round %0d \n",Round_step);    
+
+    
     
     
     
@@ -327,29 +335,29 @@ endtask
 
    end
     Q1:begin 
-        testq_a = chachamatrixIN[0][1];
-        testq_b = chachamatrixIN[1][1]; 
-        testq_c = chachamatrixIN[2][1];
-        testq_d = chachamatrixIN[3][1];  
+        testq_a = uut.INITINITchachastate[0][1];
+        testq_b = uut.INITINITchachastate[1][1]; 
+        testq_c = uut.INITINITchachastate[2][1];
+        testq_d = uut.INITINITchachastate[3][1];  
         $display("In Q%0d \n",QSTEP); 
           
        
             
        end
     Q2:begin 
-        testq_a = chachamatrixIN[0][2];
-        testq_b = chachamatrixIN[1][2]; 
-        testq_c = chachamatrixIN[2][2];
-        testq_d = chachamatrixIN[3][2];
+        testq_a = uut.INITINITchachastate[0][2];
+        testq_b = uut.INITINITchachastate[1][2]; 
+        testq_c = uut.INITINITchachastate[2][2];
+        testq_d = uut.INITINITchachastate[3][2];
         $display("In Q%0d \n",QSTEP); 
           
      
        end       
      Q3:begin 
-        testq_a = chachamatrixIN[0][3];
-        testq_b = chachamatrixIN[1][3]; 
-        testq_c = chachamatrixIN[2][3];
-        testq_d = chachamatrixIN[3][3];
+        testq_a = uut.INITINITchachastate[0][3];
+        testq_b = uut.INITINITchachastate[1][3]; 
+        testq_c = uut.INITINITchachastate[2][3];
+        testq_d = uut.INITINITchachastate[3][3];
          $display("In Q%0d \n",QSTEP); 
           
  
@@ -405,6 +413,10 @@ endtask
     
     
     
+    
+    
+    
+    
     // Clock generation
     initial clk = 0;
     always #5 clk = ~clk;
@@ -425,7 +437,7 @@ endtask
         // NOTE WHEN FILLING THE MATRIX SETROUNDS NEED TO = 1
         // ELSE KEEP LOW ALL THE TIME WHILE FSMS ARE RUNNING
         
-        $display("Test 2: Move through states IDLE-S7, Performing ARX ops");
+        $display("Test 2: Perform full 20 rounds");
         #20;
         setRounds = 1;
         #20;

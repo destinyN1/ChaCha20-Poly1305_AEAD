@@ -77,7 +77,7 @@ module PerformQround
                 counter <= counter + 1;
                 
             end
-            else if(counter == 10) begin
+            else if((counter == 9) && ((Currstep == S12) && (CurrQ == Q7))) begin
                 counter <= 0;
                 blocksproduced = blocksproduced + 1;
             end
@@ -560,7 +560,7 @@ module PerformQround
     end
         endcase
     
-        if (counter == 10) begin
+        if ((counter == 9) && (Currstep == S12) && (CurrQ == Q7)) begin
             for (int x = 0; x < 4; x++) begin
                 for (int y = 0; y < 4; y++) begin
                     chachamatrixOUT[x][y] = INITINITchachastate[x][y] + TEMPchachastateQ4Q7[x][y];
