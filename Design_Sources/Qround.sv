@@ -487,7 +487,7 @@ module PerformQround
         if((CurrQ == Q4) && (counter == 0)) begin  
                TEMPchachastateQ4Q7 = TEMPpchachastate;
         end
-        else if (((CurrQ == Q4) && ((counter > 0)&&(counter <= 10)))) begin
+        else if (((CurrQ == Q4) && (Currstep == IDLE) && ((counter > 0)&&(counter <= 10)))) begin
          
          TEMPchachastateQ4Q7 = INITchachastate;
         end
