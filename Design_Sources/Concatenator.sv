@@ -23,7 +23,7 @@
 
 
 
-typedef logic [31:0] word_t;
+//typedef logic [31:0] word_t;
 
 //WILL MAKE THIS A SYNCHRONOUS BUFFER
 //DATA_SIZE = 8 bits, THIS IS THE SIZE OF OUR INPUT COMING FROM THE SERIALISER

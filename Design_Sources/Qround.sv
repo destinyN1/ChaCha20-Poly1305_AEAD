@@ -19,7 +19,7 @@
 //// 
 ////////////////////////////////////////////////////////////////////////////////////
 
-typedef logic [31:0] word_t;
+//typedef logic [31:0] word_t;
 
 //perform all necessary Q rounds, track which Q round we need to perform, add initial chacha matrix to finished one and then output
 module PerformQround

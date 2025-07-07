@@ -41,25 +41,25 @@ module ChaChaState(
 );
 
    //fill first row with constants
-   always_ff @(posedge clk) begin
+   always_latch begin
        //maybe can default to just having output to zero
        if (clrMatrix)
-           chachatoQround <= '{default:0};       
+           chachatoQround = '{default:0};       
        else
            for (int i = 0; i < 4; i++)
-               chachatoQround[0][i] <= Constant[i];
+               chachatoQround[0][i] = Constant[i];
    
 
    //fill second and third row with key
            for (int j = 0; j < 8; j++)
-            chachatoQround[1+j/4][j%4] <= Key[j];
+            chachatoQround[1+j/4][j%4] = Key[j];
   
   //fill last row with Nonce and block
-           chachatoQround[3][0] <= Block;
+           chachatoQround[3][0] = Block;
           
-           chachatoQround[3][1] <= Nonce[0];           
-           chachatoQround[3][2] <= Nonce[1];
-           chachatoQround[3][3] <= Nonce[2];
+           chachatoQround[3][1] = Nonce[0];           
+           chachatoQround[3][2] = Nonce[1];
+           chachatoQround[3][3] = Nonce[2];
            
    end
       

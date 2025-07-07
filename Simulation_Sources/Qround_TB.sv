@@ -58,6 +58,19 @@ module Q0_Q7_Test_TB;
     endtask
     
     
+     task print_output_matrix();
+        $display("Output Matrix:");
+        for (int i = 0; i < 4; i++) begin
+            $write("Row %0d: ", i);
+            for(int j = 0; j < 4; j++) begin
+                $write("%08h ", chachamatrixOUT[i][j]);
+            end
+            $write("\n");
+        end
+        $display(""); // Add blank line
+    endtask
+    
+    
     task print_temp_matrix();
         $display("Temp Matrix:");
         for (int i = 0; i < 4; i++) begin
@@ -281,10 +294,10 @@ endtask
                                    
                end
               else begin
-               setRounds = 1;
+//               setRounds = 1;
                
-               #10;
-               setRounds = 0;
+//               #10;
+//               setRounds = 0;
                
              //  printC1();
                end
@@ -328,7 +341,7 @@ endtask
     testq_b = uut.INITINITchachastate[1][0]; 
     testq_c = uut.INITINITchachastate[2][0];
     testq_d = uut.INITINITchachastate[3][0];
-    $display("In Q%0d \n",QSTEP);    
+ //   $display("In Q%0d \n",QSTEP);    
    // $display("In Round %0d \n",Round_step);    
 
     
@@ -343,7 +356,7 @@ endtask
         testq_b = uut.INITINITchachastate[1][1]; 
         testq_c = uut.INITINITchachastate[2][1];
         testq_d = uut.INITINITchachastate[3][1];  
-        $display("In Q%0d \n",QSTEP); 
+      //  $display("In Q%0d \n",QSTEP); 
           
        
             
@@ -353,7 +366,7 @@ endtask
         testq_b = uut.INITINITchachastate[1][2]; 
         testq_c = uut.INITINITchachastate[2][2];
         testq_d = uut.INITINITchachastate[3][2];
-        $display("In Q%0d \n",QSTEP); 
+       // $display("In Q%0d \n",QSTEP); 
           
      
        end       
@@ -362,7 +375,7 @@ endtask
         testq_b = uut.INITINITchachastate[1][3]; 
         testq_c = uut.INITINITchachastate[2][3];
         testq_d = uut.INITINITchachastate[3][3];
-         $display("In Q%0d \n",QSTEP); 
+     //    $display("In Q%0d \n",QSTEP); 
           
  
        end       
@@ -371,7 +384,7 @@ endtask
         testq_b = uut.TEMPchachastateQ4Q7[1][1]; 
         testq_c = uut.TEMPchachastateQ4Q7[2][2];
         testq_d = uut.TEMPchachastateQ4Q7[3][3];
-        $display("In Q%0d \n",QSTEP); 
+     //   $display("In Q%0d \n",QSTEP); 
           
        
        end      
@@ -380,7 +393,7 @@ endtask
         testq_b = uut.TEMPchachastateQ4Q7[1][2]; 
         testq_c = uut.TEMPchachastateQ4Q7[2][3];
         testq_d = uut.TEMPchachastateQ4Q7 [3][0];
-        $display("In Q%0d \n",QSTEP); 
+     //   $display("In Q%0d \n",QSTEP); 
           
        
        end     
@@ -389,7 +402,7 @@ endtask
         testq_b = uut.TEMPchachastateQ4Q7 [1][3]; 
         testq_c = uut.TEMPchachastateQ4Q7 [2][0];
         testq_d = uut.TEMPchachastateQ4Q7 [3][1];
-        $display("In Q%0d \n",QSTEP); 
+     //   $display("In Q%0d \n",QSTEP); 
           
       
        end
@@ -398,7 +411,7 @@ endtask
         testq_b = uut.TEMPchachastateQ4Q7 [1][0]; 
         testq_c = uut.TEMPchachastateQ4Q7[2][1];
         testq_d = uut.TEMPchachastateQ4Q7[3][2];
-        $display("In Q%0d \n",QSTEP); 
+       // $display("In Q%0d \n",QSTEP); 
           
        
    end
@@ -446,9 +459,28 @@ endtask
         setRounds = 1;
         #20;
         setRounds = 0;
-        test_arx_ops();
+     //   test_arx_ops();
+       
+       
+       setRounds = 1;
+        #10;
+        fill_matrix_test_vector();
+        #10;
+        print_input_matrix();        
         
-        $display("exited");
+ 
+        @(posedge clk);
+       // @(posedge clk);
+        setRounds = 0;
+        
+     //   $display("exited");
+        
+        
+        wait(uut.blockready == 1);
+        print_output_matrix();
+        
+                $display("exited");
+
         
         #1000;
         
