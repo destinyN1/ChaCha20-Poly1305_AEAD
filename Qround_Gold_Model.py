@@ -75,8 +75,6 @@ def inner_block(state):
     Qround(state, 1, 5, 9, 13) 
     Qround(state, 2, 6, 10, 14) 
     Qround(state, 3, 7, 11, 15)
-
-    print_state(state)
     
     # Diagonal rounds
     Qround(state, 0, 5, 10, 15) 
@@ -84,77 +82,12 @@ def inner_block(state):
     Qround(state, 2, 7, 8, 13) 
     Qround(state, 3, 4, 9, 14) 
 
-    print_state(state)
-
     return state
 
 def twentyrounds(state):
     """Performs 20 rounds (10 inner blocks) of ChaCha20"""
     for i in range(10): 
         inner_block(state)
-
-def twentyrounds_verbose(state):
-    """
-    Performs all 20 rounds (10 inner blocks) of ChaCha20 
-    and prints the matrix after each individual Qround operation
-    """
-    print("="*70)
-    print("PERFORMING ALL 20 ROUNDS WITH DETAILED OUTPUT")
-    print("="*70)
-    
-    print("Initial state:")
-    print_state(state)
-    print()
-    
-    # Perform 10 inner blocks (20 rounds total)
-    for block_num in range(10):
-        round_odd = (block_num * 2) + 1   # Odd round number (column rounds)
-        round_even = (block_num * 2) + 2  # Even round number (diagonal rounds)
-        
-        print(f"--- ROUND {round_odd}: COLUMN ROUNDS (Block {block_num + 1}/10) ---")
-        
-        print(f"After Qround(0, 4, 8, 12) - Round {round_odd}:")
-        Qround(state, 0, 4, 8, 12)
-        print_state(state)
-        
-        print(f"After Qround(1, 5, 9, 13) - Round {round_odd}:")
-        Qround(state, 1, 5, 9, 13)
-        print_state(state)
-        
-        print(f"After Qround(2, 6, 10, 14) - Round {round_odd}:")
-        Qround(state, 2, 6, 10, 14)
-        print_state(state)
-        
-        print(f"After Qround(3, 7, 11, 15) - Round {round_odd}:")
-        Qround(state, 3, 7, 11, 15)
-        print_state(state)
-        
-        print(f"--- ROUND {round_even}: DIAGONAL ROUNDS (Block {block_num + 1}/10) ---")
-        
-        print(f"After Qround(0, 5, 10, 15) - Round {round_even}:")
-        Qround(state, 0, 5, 10, 15)
-        print_state(state)
-        
-        print(f"After Qround(1, 6, 11, 12) - Round {round_even}:")
-        Qround(state, 1, 6, 11, 12)
-        print_state(state)
-        
-        print(f"After Qround(2, 7, 8, 13) - Round {round_even}:")
-        Qround(state, 2, 7, 8, 13)
-        print_state(state)
-        
-        print(f"After Qround(3, 4, 9, 14) - Round {round_even}:")
-        Qround(state, 3, 4, 9, 14)
-        print_state(state)
-        
-        print(f">>> COMPLETED ROUNDS {round_odd}-{round_even} (Block {block_num + 1}/10) <<<")
-        print()
-    
-    print("="*70)
-    print("ALL 20 ROUNDS COMPLETED")
-    print("="*70)
-    
-    return state
 
 # ============================================================================
 # HELPER FUNCTIONS
@@ -212,91 +145,227 @@ def add_initial_to_final(initial_state, final_state):
     return added_state
 
 # ============================================================================
-# TEST AND VALIDATION FUNCTIONS
+# FILE READING AND TEST PARSING FUNCTIONS
 # ============================================================================
 
-def test_first_two_rounds():
-    """Test function to run only the first 2 rounds"""
-    # Initialize state with test vector
-    state = []
-    fill_state_with_test_vector(state)
+def parse_matrix_from_text(matrix_text):
+    """Parse a matrix from text format like 'Row 0: 09f9ae30 b6ba21d9 ...'"""
+    matrix = []
+    lines = matrix_text.strip().split('\n')
     
-    # Run first 2 rounds with verbose output
-    first_two_rounds_verbose(state)
+    for line in lines:
+        if line.startswith('Row'):
+            # Extract hex values from the line
+            parts = line.split(': ')[1].strip().split()
+            row = [int(hex_val, 16) for hex_val in parts]
+            matrix.append(row)
     
-    # Clean up
-    del state
-    gc.collect()
+    return matrix
 
-def test_all_twenty_rounds():
-    """Test function to run all 20 rounds with verbose output"""
-    # Initialize state with test vector
-    state = []
-    fill_state_with_test_vector(state)
+def read_test_matrices_from_file(filename):
+    """Read all test matrices from the provided file"""
+    try:
+        with open(filename, 'r') as file:
+            content = file.read()
+    except FileNotFoundError:
+        print(f"Error: File '{filename}' not found.")
+        return None
     
-    # Run all 20 rounds with verbose output
-    twentyrounds_verbose(state)
+    tests = []
     
-    # Clean up
-    del state
-    gc.collect()
+    # Split content by test cases
+    test_blocks = re.split(r'TEST NO\.(\d+)', content)[1:]  # Skip first empty element
+    
+    for i in range(0, len(test_blocks), 2):
+        test_num = int(test_blocks[i])
+        test_content = test_blocks[i + 1]
+        
+        # Extract input matrix
+        input_match = re.search(r'Input Matrix:\n((?:Row \d+:.*\n?){4})', test_content)
+        if not input_match:
+            continue
+            
+        # Extract output matrix
+        output_match = re.search(r'Output Matrix:\n((?:Row \d+:.*\n?){4})', test_content)
+        if not output_match:
+            continue
+        
+        input_matrix = parse_matrix_from_text(input_match.group(1))
+        output_matrix = parse_matrix_from_text(output_match.group(1))
+        
+        tests.append({
+            'test_num': test_num,
+            'input': input_matrix,
+            'expected_output': output_matrix
+        })
+    
+    return tests
 
-def first_two_rounds_verbose(state):
-    """
-    Performs the first 2 rounds (1 inner block) of ChaCha20 
-    and prints the matrix after each individual Qround operation
-    """
-    print("="*60)
-    print("PERFORMING FIRST 2 ROUNDS WITH DETAILED OUTPUT")
-    print("="*60)
+def compare_matrices(matrix1, matrix2, test_num):
+    """Compare two 4x4 matrices and return detailed comparison results"""
+    mismatches = []
+    all_match = True
     
-    print("Initial state:")
-    print_state(state)
+    for i in range(4):
+        for j in range(4):
+            if matrix1[i][j] != matrix2[i][j]:
+                all_match = False
+                mismatches.append({
+                    'position': (i, j),
+                    'expected': matrix2[i][j],
+                    'actual': matrix1[i][j]
+                })
+    
+    return {
+        'test_num': test_num,
+        'passed': all_match,
+        'mismatches': mismatches,
+        'total_mismatches': len(mismatches)
+    }
+
+def run_chacha20_on_matrix(input_matrix):
+    """Run ChaCha20 20-rounds on input matrix and return result"""
+    # Create a copy of the input matrix to avoid modifying original
+    state = copy_state(input_matrix)
+    
+    # Save the initial state before running rounds
+    initial_state = copy_state(state)
+    
+    # Perform 20 rounds of ChaCha20
+    twentyrounds(state)
+    
+    # Add initial state to final state (ChaCha20 final step)
+    final_output = add_initial_to_final(initial_state, state)
+    
+    return final_output
+
+def print_comparison_results(comparison_result):
+    """Print detailed comparison results for a single test"""
+    test_num = comparison_result['test_num']
+    
+    if comparison_result['passed']:
+        print(f"TEST {test_num}: PASSED [OK]")
+    else:
+        print(f"TEST {test_num}: FAILED [X]")
+        print(f"  Total mismatches: {comparison_result['total_mismatches']}/16")
+        
+        for mismatch in comparison_result['mismatches']:
+            pos = mismatch['position']
+            expected = mismatch['expected']
+            actual = mismatch['actual']
+            print(f"  Position [{pos[0]}][{pos[1]}]: Expected 0x{expected:08X}, Got 0x{actual:08X}")
+
+def run_comprehensive_test_suite(filename='thousandrandtests.txt'):
+    """Run comprehensive test suite on all matrices from file"""
+    print("="*80)
+    print("CHACHA20 COMPREHENSIVE TEST SUITE")
+    print("="*80)
+    
+    # Read test matrices from file
+    print(f"Reading test matrices from '{filename}'...")
+    tests = read_test_matrices_from_file(filename)
+    
+    if tests is None:
+        print("Failed to read test file. Exiting.")
+        return
+    
+    print(f"Found {len(tests)} test cases.")
+    print("="*80)
+    
+    # Track results
+    passed_tests = 0
+    failed_tests = 0
+    all_results = []
+    
+    # Run tests
+    for test_data in tests:
+        test_num = test_data['test_num']
+        input_matrix = test_data['input']
+        expected_output = test_data['expected_output']
+        
+        # Run ChaCha20 on input matrix
+        actual_output = run_chacha20_on_matrix(input_matrix)
+        
+        # Compare results
+        comparison = compare_matrices(actual_output, expected_output, test_num)
+        all_results.append(comparison)
+        
+        # Update counters
+        if comparison['passed']:
+            passed_tests += 1
+        else:
+            failed_tests += 1
+        
+        # Print results for this test
+        print_comparison_results(comparison)
+    
+    # Print summary
+    print("="*80)
+    print("SUMMARY")
+    print("="*80)
+    print(f"Total tests: {len(tests)}")
+    print(f"Passed: {passed_tests}")
+    print(f"Failed: {failed_tests}")
+    print(f"Pass rate: {(passed_tests/len(tests)*100):.2f}%")
+    
+    if failed_tests > 0:
+        print("\nFAILED TESTS:")
+        for result in all_results:
+            if not result['passed']:
+                print(f"  Test {result['test_num']}: {result['total_mismatches']} mismatches")
+    
+    print("="*80)
+    
+    return all_results
+
+def run_single_test_detailed(test_num, filename='thousandrandtests.txt'):
+    """Run a single test with detailed output"""
+    tests = read_test_matrices_from_file(filename)
+    if tests is None:
+        return
+    
+    # Find the specific test
+    test_data = None
+    for test in tests:
+        if test['test_num'] == test_num:
+            test_data = test
+            break
+    
+    if test_data is None:
+        print(f"Test {test_num} not found in file.")
+        return
+    
+    print(f"="*60)
+    print(f"DETAILED TEST {test_num}")
+    print(f"="*60)
+    
+    input_matrix = test_data['input']
+    expected_output = test_data['expected_output']
+    
+    print("Input Matrix:")
+    print_state(input_matrix)
     print()
     
-    # Column rounds (Round 1)
-    print("--- ROUND 1: COLUMN ROUNDS ---")
+    # Run ChaCha20
+    actual_output = run_chacha20_on_matrix(input_matrix)
     
-    print("After Qround(0, 4, 8, 12):")
-    Qround(state, 0, 4, 8, 12)
-    print_state(state)
+    print("Actual Output:")
+    print_state(actual_output)
+    print()
     
-    print("After Qround(1, 5, 9, 13):")
-    Qround(state, 1, 5, 9, 13)
-    print_state(state)
+    print("Expected Output:")
+    print_state(expected_output)
+    print()
     
-    print("After Qround(2, 6, 10, 14):")
-    Qround(state, 2, 6, 10, 14)
-    print_state(state)
+    # Compare
+    comparison = compare_matrices(actual_output, expected_output, test_num)
+    print_comparison_results(comparison)
     
-    print("After Qround(3, 7, 11, 15):")
-    Qround(state, 3, 7, 11, 15)
-    print_state(state)
-    
-    # Diagonal rounds (Round 2)
-    print("--- ROUND 2: DIAGONAL ROUNDS ---")
-    
-    print("After Qround(0, 5, 10, 15):")
-    Qround(state, 0, 5, 10, 15)
-    print_state(state)
-    
-    print("After Qround(1, 6, 11, 12):")
-    Qround(state, 1, 6, 11, 12)
-    print_state(state)
-    
-    print("After Qround(2, 7, 8, 13):")
-    Qround(state, 2, 7, 8, 13)
-    print_state(state)
-    
-    print("After Qround(3, 4, 9, 14):")
-    Qround(state, 3, 4, 9, 14)
-    print_state(state)
-    
-    print("="*60)
-    print("FIRST 2 ROUNDS COMPLETED")
-    print("="*60)
-    
-    return state
+    return comparison
+
+# ============================================================================
+# ORIGINAL TEST AND VALIDATION FUNCTIONS
+# ============================================================================
 
 def compare_with_expected(state, verbose=False):
     """Compares state with expected test vector result"""
@@ -331,39 +400,6 @@ def compare_with_expected(state, verbose=False):
     
     return all_match
 
-def compare_with_expected_added_state(added_state, verbose=False):
-    """Compares added_state with expected result after adding initial state"""
-    expected_added = [
-        [0xe4e7f110, 0x15593bd1, 0x1fdd0f50, 0xc47120a3],
-        [0xc7f4d1c7, 0x0368c033, 0x9aaa2204, 0x4e6cd4c3],
-        [0x466482d2, 0x09aa9f07, 0x05d7c214, 0xa2028bd9],
-        [0xd19c12b5, 0xb94e16de, 0xe883d0cb, 0x4e3c50a2]
-    ]
-    
-    all_match = True
-    failed_positions = []
-    
-    for i in range(4):
-        for j in range(4):
-            if expected_added[i][j] != added_state[i][j]:
-                all_match = False
-                failed_positions.append((i, j))
-    
-    if verbose or not all_match:
-        print("Added state comparison:")
-        for i in range(4):
-            for j in range(4):
-                expected_val = expected_added[i][j]
-                actual_val = added_state[i][j]
-                match = expected_val == actual_val
-                status = "[OK]" if match else "[X]"
-                print(f"[{i}][{j}]: Expected 0x{expected_val:08X}, Got 0x{actual_val:08X} {status}")
-    
-    result_msg = "PASS - All values match" if all_match else f"FAIL - {len(failed_positions)} mismatches"
-    print(f"Final test: {result_msg}")
-    
-    return all_match
-
 def test_vector_validation(verbose=False):
     """
     Complete ChaCha20 test vector validation function.
@@ -387,97 +423,42 @@ def test_vector_validation(verbose=False):
     # Test after 20 rounds
     test1_result = compare_with_expected(state, verbose)
     
-    # Add initial state and test final result
-    final_state = copy_state(state)
-    added_state = add_initial_to_final(initial_state, final_state)
-    
-    if verbose:
-        print_state(added_state, "Final added state")
-    
-    test2_result = compare_with_expected_added_state(added_state, verbose)
-    
-    # Final results
-    overall_result = test1_result and test2_result
-    print("="*50)
-    
-    if overall_result:
-        print("*** CHACHA20 VALIDATION: SUCCESS ***")
-    else:
-        print("*** CHACHA20 VALIDATION: FAILED ***")
-        if not test1_result:
-            print("  - 20-round test failed")
-        if not test2_result:
-            print("  - Final state test failed")
-    
-    print("="*50)
-    
     # Memory cleanup
-    del state, initial_state, final_state, added_state
+    del state, initial_state
     gc.collect()
     
-    return overall_result
-
-def test_vector_validation_verbose():
-    """
-    Complete ChaCha20 test vector validation with verbose 20-round output.
-    """
-    print("="*70)
-    print("CHACHA20 TEST VECTOR VALIDATION WITH VERBOSE OUTPUT")
-    print("="*70)
-    
-    # Initialize and fill with test vector
-    state = []
-    fill_state_with_test_vector(state)
-    
-    # Save initial state and run 20 rounds with verbose output
-    initial_state = copy_state(state)
-    twentyrounds_verbose(state)
-    
-    # Test after 20 rounds
-    test1_result = compare_with_expected(state, verbose=True)
-    
-    # Add initial state and test final result
-    final_state = copy_state(state)
-    added_state = add_initial_to_final(initial_state, final_state)
-    
-    print_state(added_state, "Final added state")
-    
-    test2_result = compare_with_expected_added_state(added_state, verbose=True)
-    
-    # Final results
-    overall_result = test1_result and test2_result
-    print("="*70)
-    
-    if overall_result:
-        print("*** CHACHA20 VERBOSE VALIDATION: SUCCESS ***")
-    else:
-        print("*** CHACHA20 VERBOSE VALIDATION: FAILED ***")
-        if not test1_result:
-            print("  - 20-round test failed")
-        if not test2_result:
-            print("  - Final state test failed")
-    
-    print("="*70)
-    
-    # Memory cleanup
-    del state, initial_state, final_state, added_state
-    gc.collect()
-    
-    return overall_result
+    return test1_result
 
 # ============================================================================
 # MAIN EXECUTION
 # ============================================================================
 
 if __name__ == "__main__":
-    # Run the new verbose validation with all 20 rounds
-   # test_vector_validation_verbose()
+    # Run the original golden model test first
+    print("Running original ChaCha20 test vector validation with standard test vectors...")
+    test_vector_validation(verbose=True)
+    print("\n")
     
-    # Uncomment below to run just the verbose 20 rounds without validation
-    # test_all_twenty_rounds()
+    # Run comprehensive test suite on file
+    print("Running comprehensive test suite on random matrices...")
     
-    # Uncomment below to run the original validation (non-verbose)
-     test_vector_validation(verbose=True)
+    # You can uncomment this line to run all tests:
+   #results = run_comprehensive_test_suite('thousandrandtests.txt')
     
-    # Uncomment below to run just the first two rounds
-    # test_first_two_rounds()
+    # Or run a single test with detailed output:
+    run_single_test_detailed(0, 'thousandrandtests.txt')
+    
+    # For demonstration, let's run the first few tests
+    # print("Running first 5 tests as demonstration...")
+    # tests = read_test_matrices_from_file('thousandrandtests.txt')
+    # if tests:
+    #     for i in range(min(5, len(tests))):
+    #         test_data = tests[i]
+    #         actual_output = run_chacha20_on_matrix(test_data['input'])
+    #         comparison = compare_matrices(actual_output, test_data['expected_output'], test_data['test_num'])
+    #         print_comparison_results(comparison)
+        
+    #     print(f"\nTo run all {len(tests)} tests, uncomment the line:")
+    #     print("results = run_comprehensive_test_suite('thousandrandtests.txt')")
+    # else:
+    #     print("Could not read test file. Make sure 'thousandrandtests.txt' is in the current directory.")

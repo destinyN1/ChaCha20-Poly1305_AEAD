@@ -64,3 +64,6 @@ combined_reference = add_matrices(expected_matrix, initial_test_vector)
 
 # Step 4: Compare results
 compare_matrices(combined_reversed, combined_reference, name="(TEMP + INITINIT) vs (Expected + Test Vector)")
+
+
+print(combined_reference)
