@@ -1,0 +1,252 @@
+Input Matrix:
+Row 0: 00000000 00000000 00000000 00000000 
+Row 1: 00000000 00000000 00000000 00000000 
+Row 2: 00000000 00000000 00000000 00000000 
+Row 3: 00000000 00000000 00000000 00000000 
+
+Output Matrix (Pattern 0xxxxxxxxx):
+Output Matrix:
+Row 0: 00000000 00000000 00000000 00000000 
+Row 1: 00000000 00000000 00000000 00000000 
+Row 2: 00000000 00000000 00000000 00000000 
+Row 3: 00000000 00000000 00000000 00000000 
+
+
+=== Testing Pattern 0xxxxxxxxx repeated ===
+Input Matrix (Pattern 0xxxxxxxxx):
+Input Matrix:
+Row 0: 00000000 00000000 00000000 00000000 
+Row 1: 11111111 11111111 11111111 11111111 
+Row 2: 11111111 11111111 11111111 11111111 
+Row 3: 11111111 11111111 11111111 11111111 
+
+Output Matrix (Pattern 0xxxxxxxxx):
+Output Matrix:
+Row 0: 00000000 00000000 00000000 00000000 
+Row 1: 00000000 00000000 00000000 00000000 
+Row 2: 00000000 00000000 00000000 00000000 
+Row 3: 00000000 00000000 00000000 00000000 
+
+
+=== Testing Pattern 0xxxxxxxxx repeated ===
+Input Matrix (Pattern 0xxxxxxxxx):
+Input Matrix:
+Row 0: 22222222 22222222 22222222 22222222 
+Row 1: 22222222 22222222 22222222 22222222 
+Row 2: 22222222 22222222 22222222 22222222 
+Row 3: 22222222 22222222 22222222 22222222 
+
+Output Matrix (Pattern 0xxxxxxxxx):
+Output Matrix:
+Row 0: c56e7245 c56e7245 c56e7245 c56e7245 
+Row 1: 550ccb4a 550ccb4a 550ccb4a 550ccb4a 
+Row 2: 962aa94a 962aa94a 962aa94a 962aa94a 
+Row 3: 22c11e26 22c11e26 22c11e26 22c11e26 
+
+
+=== Testing Pattern 0xxxxxxxxx repeated ===
+Input Matrix (Pattern 0xxxxxxxxx):
+Input Matrix:
+Row 0: 00000000 00000000 00000000 00000000 
+Row 1: 33333333 33333333 33333333 33333333 
+Row 2: 33333333 33333333 33333333 33333333 
+Row 3: 33333333 33333333 33333333 33333333 
+
+Output Matrix (Pattern 0xxxxxxxxx):
+Output Matrix:
+Row 0: c56e7245 c56e7245 c56e7245 c56e7245 
+Row 1: 550ccb4a 550ccb4a 550ccb4a 550ccb4a 
+Row 2: 962aa94a 962aa94a 962aa94a 962aa94a 
+Row 3: 22c11e26 22c11e26 22c11e26 22c11e26 
+
+
+=== Testing Pattern 0xxxxxxxxx repeated ===
+Input Matrix (Pattern 0xxxxxxxxx):
+Input Matrix:
+Row 0: 44444444 44444444 44444444 44444444 
+Row 1: 44444444 44444444 44444444 44444444 
+Row 2: 44444444 44444444 44444444 44444444 
+Row 3: 44444444 44444444 44444444 44444444 
+
+Output Matrix (Pattern 0xxxxxxxxx):
+Output Matrix:
+Row 0: e6093651 e6093651 e6093651 e6093651 
+Row 1: 33b401aa 33b401aa 33b401aa 33b401aa 
+Row 2: 0a05010c 0a05010c 0a05010c 0a05010c 
+Row 3: 3f4093fa 3f4093fa 3f4093fa 3f4093fa 
+
+
+=== Testing Pattern 0xxxxxxxxx repeated ===
+Input Matrix (Pattern 0xxxxxxxxx):
+Input Matrix:
+Row 0: 00000000 00000000 00000000 00000000 
+Row 1: 55555555 55555555 55555555 55555555 
+Row 2: 55555555 55555555 55555555 55555555 
+Row 3: 55555555 55555555 55555555 55555555 
+
+Output Matrix (Pattern 0xxxxxxxxx):
+Output Matrix:
+Row 0: e6093651 e6093651 e6093651 e6093651 
+Row 1: 33b401aa 33b401aa 33b401aa 33b401aa 
+Row 2: 0a05010c 0a05010c 0a05010c 0a05010c 
+Row 3: 3f4093fa 3f4093fa 3f4093fa 3f4093fa 
+
+
+=== Testing Pattern 0xxxxxxxxx repeated ===
+Input Matrix (Pattern 0xxxxxxxxx):
+Input Matrix:
+Row 0: 66666666 66666666 66666666 66666666 
+Row 1: 66666666 66666666 66666666 66666666 
+Row 2: 66666666 66666666 66666666 66666666 
+Row 3: 66666666 66666666 66666666 66666666 
+
+Output Matrix (Pattern 0xxxxxxxxx):
+Output Matrix:
+Row 0: b1d22ce7 b1d22ce7 b1d22ce7 b1d22ce7 
+Row 1: 38297f2b 38297f2b 38297f2b 38297f2b 
+Row 2: 3e3e4ae8 3e3e4ae8 3e3e4ae8 3e3e4ae8 
+Row 3: 69607f4d 69607f4d 69607f4d 69607f4d 
+
+
+=== Testing Pattern 0xxxxxxxxx repeated ===
+Input Matrix (Pattern 0xxxxxxxxx):
+Input Matrix:
+Row 0: 00000000 00000000 00000000 00000000 
+Row 1: 77777777 77777777 77777777 77777777 
+Row 2: 77777777 77777777 77777777 77777777 
+Row 3: 77777777 77777777 77777777 77777777 
+
+Output Matrix (Pattern 0xxxxxxxxx):
+Output Matrix:
+Row 0: b1d22ce7 b1d22ce7 b1d22ce7 b1d22ce7 
+Row 1: 38297f2b 38297f2b 38297f2b 38297f2b 
+Row 2: 3e3e4ae8 3e3e4ae8 3e3e4ae8 3e3e4ae8 
+Row 3: 69607f4d 69607f4d 69607f4d 69607f4d 
+
+
+=== Testing Pattern 0xxxxxxxxx repeated ===
+Input Matrix (Pattern 0xxxxxxxxx):
+Input Matrix:
+Row 0: 88888888 88888888 88888888 88888888 
+Row 1: 88888888 88888888 88888888 88888888 
+Row 2: 88888888 88888888 88888888 88888888 
+Row 3: 88888888 88888888 88888888 88888888 
+
+Output Matrix (Pattern 0xxxxxxxxx):
+Output Matrix:
+Row 0: 240f0ad4 240f0ad4 240f0ad4 240f0ad4 
+Row 1: ed43123e ed43123e ed43123e ed43123e 
+Row 2: 99e4573c 99e4573c 99e4573c 99e4573c 
+Row 3: 2ab0d8e3 2ab0d8e3 2ab0d8e3 2ab0d8e3 
+
+
+=== Testing Pattern 0xxxxxxxxx repeated ===
+Input Matrix (Pattern 0xxxxxxxxx):
+Input Matrix:
+Row 0: 00000000 00000000 00000000 00000000 
+Row 1: 99999999 99999999 99999999 99999999 
+Row 2: 99999999 99999999 99999999 99999999 
+Row 3: 99999999 99999999 99999999 99999999 
+
+Output Matrix (Pattern 0xxxxxxxxx):
+Output Matrix:
+Row 0: 240f0ad4 240f0ad4 240f0ad4 240f0ad4 
+Row 1: ed43123e ed43123e ed43123e ed43123e 
+Row 2: 99e4573c 99e4573c 99e4573c 99e4573c 
+Row 3: 2ab0d8e3 2ab0d8e3 2ab0d8e3 2ab0d8e3 
+
+
+=== Testing Pattern 0xxxxxxxxx repeated ===
+Input Matrix (Pattern 0xxxxxxxxx):
+Input Matrix:
+Row 0: aaaaaaaa aaaaaaaa aaaaaaaa aaaaaaaa 
+Row 1: aaaaaaaa aaaaaaaa aaaaaaaa aaaaaaaa 
+Row 2: aaaaaaaa aaaaaaaa aaaaaaaa aaaaaaaa 
+Row 3: aaaaaaaa aaaaaaaa aaaaaaaa aaaaaaaa 
+
+Output Matrix (Pattern 0xxxxxxxxx):
+Output Matrix:
+Row 0: 74e5160b 74e5160b 74e5160b 74e5160b 
+Row 1: d708e7dc d708e7dc d708e7dc d708e7dc 
+Row 2: 66322d15 66322d15 66322d15 66322d15 
+Row 3: 847ad49e 847ad49e 847ad49e 847ad49e 
+
+
+=== Testing Pattern 0xxxxxxxxx repeated ===
+Input Matrix (Pattern 0xxxxxxxxx):
+Input Matrix:
+Row 0: 00000000 00000000 00000000 00000000 
+Row 1: bbbbbbbb bbbbbbbb bbbbbbbb bbbbbbbb 
+Row 2: bbbbbbbb bbbbbbbb bbbbbbbb bbbbbbbb 
+Row 3: bbbbbbbb bbbbbbbb bbbbbbbb bbbbbbbb 
+
+Output Matrix (Pattern 0xxxxxxxxx):
+Output Matrix:
+Row 0: 74e5160b 74e5160b 74e5160b 74e5160b 
+Row 1: d708e7dc d708e7dc d708e7dc d708e7dc 
+Row 2: 66322d15 66322d15 66322d15 66322d15 
+Row 3: 847ad49e 847ad49e 847ad49e 847ad49e 
+
+
+=== Testing Pattern 0xxxxxxxxx repeated ===
+Input Matrix (Pattern 0xxxxxxxxx):
+Input Matrix:
+Row 0: cccccccc cccccccc cccccccc cccccccc 
+Row 1: cccccccc cccccccc cccccccc cccccccc 
+Row 2: cccccccc cccccccc cccccccc cccccccc 
+Row 3: cccccccc cccccccc cccccccc cccccccc 
+
+Output Matrix (Pattern 0xxxxxxxxx):
+Output Matrix:
+Row 0: b908b8e2 b908b8e2 b908b8e2 b908b8e2 
+Row 1: 33bbd568 33bbd568 33bbd568 33bbd568 
+Row 2: 3df30c01 3df30c01 3df30c01 3df30c01 
+Row 3: 0d24a840 0d24a840 0d24a840 0d24a840 
+
+
+=== Testing Pattern 0xxxxxxxxx repeated ===
+Input Matrix (Pattern 0xxxxxxxxx):
+Input Matrix:
+Row 0: 00000000 00000000 00000000 00000000 
+Row 1: dddddddd dddddddd dddddddd dddddddd 
+Row 2: dddddddd dddddddd dddddddd dddddddd 
+Row 3: dddddddd dddddddd dddddddd dddddddd 
+
+Output Matrix (Pattern 0xxxxxxxxx):
+Output Matrix:
+Row 0: b908b8e2 b908b8e2 b908b8e2 b908b8e2 
+Row 1: 33bbd568 33bbd568 33bbd568 33bbd568 
+Row 2: 3df30c01 3df30c01 3df30c01 3df30c01 
+Row 3: 0d24a840 0d24a840 0d24a840 0d24a840 
+
+
+=== Testing Pattern 0xxxxxxxxx repeated ===
+Input Matrix (Pattern 0xxxxxxxxx):
+Input Matrix:
+Row 0: eeeeeeee eeeeeeee eeeeeeee eeeeeeee 
+Row 1: eeeeeeee eeeeeeee eeeeeeee eeeeeeee 
+Row 2: eeeeeeee eeeeeeee eeeeeeee eeeeeeee 
+Row 3: eeeeeeee eeeeeeee eeeeeeee eeeeeeee 
+
+Output Matrix (Pattern 0xxxxxxxxx):
+Output Matrix:
+Row 0: 1f6087af 1f6087af 1f6087af 1f6087af 
+Row 1: a784fad5 a784fad5 a784fad5 a784fad5 
+Row 2: 678b05bf 678b05bf 678b05bf 678b05bf 
+Row 3: fa939d67 fa939d67 fa939d67 fa939d67 
+
+
+=== Testing Pattern 0xxxxxxxxx repeated ===
+Input Matrix (Pattern 0xxxxxxxxx):
+Input Matrix:
+Row 0: 00000000 00000000 00000000 00000000 
+Row 1: ffffffff ffffffff ffffffff ffffffff 
+Row 2: ffffffff ffffffff ffffffff ffffffff 
+Row 3: ffffffff ffffffff ffffffff ffffffff 
+
+Output Matrix (Pattern 0xxxxxxxxx):
+Output Matrix:
+Row 0: 1f6087af 1f6087af 1f6087af 1f6087af 
+Row 1: a784fad5 a784fad5 a784fad5 a784fad5 
+Row 2: 678b05bf 678b05bf 678b05bf 678b05bf 
+Row 3: fa939d67 fa939d67 fa939d67 fa939d67 

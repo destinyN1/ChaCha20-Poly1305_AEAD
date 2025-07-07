@@ -237,7 +237,31 @@ def run_chacha20_on_matrix(input_matrix):
     # Add initial state to final state (ChaCha20 final step)
     final_output = add_initial_to_final(initial_state, state)
     
-    return final_output
+    # Check if final_output is already a 2D matrix or a flat list
+    if isinstance(final_output[0], list):
+        # It's already a 2D matrix
+        matrix_4x4 = final_output
+    else:
+        # It's a flat list, convert to 4x4
+        matrix_4x4 = []
+        for i in range(0, 16, 4):
+            row = final_output[i:i+4]
+            matrix_4x4.append(row)
+    
+    # Print formatted hex output
+    print("Output Matrix:")
+    for i, row in enumerate(matrix_4x4):
+        # Handle both integer values and potential nested lists
+        hex_values = []
+        for val in row:
+            if isinstance(val, int):
+                hex_values.append(f"{val:08x}")
+            else:
+                # If val is not an int, try to convert it
+                hex_values.append(f"{int(val):08x}")
+        print(f"Row {i}: {' '.join(hex_values)}")
+    
+    return matrix_4x4
 
 def print_comparison_results(comparison_result):
     """Print detailed comparison results for a single test"""
@@ -434,19 +458,39 @@ def test_vector_validation(verbose=False):
 # ============================================================================
 
 if __name__ == "__main__":
+
+
+    test_matrices = []
+
+#test the pattern tests
+
+    matrix = [
+    [0x61707865, 0x3320646e, 0x79622d32, 0x6b206574],
+    [0x11111111, 0x11111111, 0x11111111, 0x11111111],
+    [0x11111111, 0x11111111, 0x11111111, 0x11111111],
+    [0x11111111, 0x11111111, 0x11111111, 0x11111111]
+]
+    output = run_chacha20_on_matrix(matrix)
+    print(output)
+
+
+
+
+
+
     # Run the original golden model test first
-    print("Running original ChaCha20 test vector validation with standard test vectors...")
-    test_vector_validation(verbose=True)
-    print("\n")
+    #print("Running original ChaCha20 test vector validation with standard test vectors...")
+    #test_vector_validation(verbose=True)
+    #print("\n")
     
     # Run comprehensive test suite on file
-    print("Running comprehensive test suite on random matrices...")
+   # print("Running comprehensive test suite on random matrices...")
     
     # You can uncomment this line to run all tests:
-   #results = run_comprehensive_test_suite('thousandrandtests.txt')
+   results = run_comprehensive_test_suite('thousandrandtests.txt')
     
     # Or run a single test with detailed output:
-    run_single_test_detailed(0, 'thousandrandtests.txt')
+  #  run_single_test_detailed(0, 'thousandrandtests.txt')
     
     # For demonstration, let's run the first few tests
     # print("Running first 5 tests as demonstration...")
