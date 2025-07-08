@@ -1,7 +1,7 @@
 import random
 import gc
 import re
-
+import numpy as np
 
 # ============================================================================
 # BIT OPERATIONS
@@ -453,29 +453,41 @@ def test_vector_validation(verbose=False):
     
     return test1_result
 
+#will generate output matrices for repeating hex patterns
+def pattern_tests():
+    pattern_matrices_hex = []
+    for i in range(16):
+        hex_string = f"0x{i:x}{i:x}{i:x}{i:x}{i:x}{i:x}{i:x}{i:x}"
+        int_value = int(hex_string,16)
+
+        matrix = np.full((4,4),int_value)
+        pattern_matrices_hex.append(matrix)
+        print(f"Pattern {hex_string} \n")
+        run_chacha20_on_matrix(matrix)
+        print("\n")
+
+    return pattern_matrices_hex     
+    #     hex_matrices = []
+    # #convert matrices to hex ints
+    # for matrix in  pattern_matrices_hex:
+    #     hex_matrix = [
+    #         [int(f'0x{val:08x}', 16) for val in row]
+    #         for row in matrix
+    #     ]
+    #     hex_matrices.append(hex_matrix)
+
+
+
 # ============================================================================
 # MAIN EXECUTION
 # ============================================================================
 
 if __name__ == "__main__":
 
-
-    test_matrices = []
-
-#test the pattern tests
-
-    matrix = [
-    [0x61707865, 0x3320646e, 0x79622d32, 0x6b206574],
-    [0x11111111, 0x11111111, 0x11111111, 0x11111111],
-    [0x11111111, 0x11111111, 0x11111111, 0x11111111],
-    [0x11111111, 0x11111111, 0x11111111, 0x11111111]
-]
-    output = run_chacha20_on_matrix(matrix)
-    print(output)
+    #pattern_matrices = pattern_tests()
 
 
-
-
+    
 
 
     # Run the original golden model test first
@@ -487,7 +499,7 @@ if __name__ == "__main__":
    # print("Running comprehensive test suite on random matrices...")
     
     # You can uncomment this line to run all tests:
-   results = run_comprehensive_test_suite('thousandrandtests.txt')
+    #results = run_comprehensive_test_suite('thousandrandtests.txt')
     
     # Or run a single test with detailed output:
   #  run_single_test_detailed(0, 'thousandrandtests.txt')
