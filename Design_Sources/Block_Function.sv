@@ -18,7 +18,7 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
-typedef logic [31:0] word_t;
+//typedef logic [31:0] word_t;
 
 
 module Block_Function(
@@ -31,8 +31,6 @@ input logic rst, clk,
    input word_t [0:7] Key,
    //3, 32-bit words     (96) bit
    input word_t [2:0] Nonce,
-   //1, 32-bit word    (32) bit
-   input word_t Block,
    //4, 32-bit words     (128) bit
    input word_t [3:0] Constant,
    
@@ -40,10 +38,9 @@ input logic rst, clk,
    //leaves block function and gets seiralized (serializer module)
    output word_t MatrixOut [3:0][3:0],
    
-   //goes to block counter
-   output logic [31:0] blocksproduced,
    
    output  logic serial_enable
+   
    
 
 
@@ -56,7 +53,13 @@ States CS,NS;
  
  logic clrMatrix, Setrounds;
  
+ logic [31:0] blocksproduced;
+ 
  logic blockready;
+ 
+ word_t Block;
+ 
+ logic [31:0] blocksproduced;
  
  
  
@@ -66,14 +69,14 @@ States CS,NS;
 
 //add a note here: this could posssibly introduce some timing issues here so I will write this here for now.
   if (rst) begin
-  blocksproduced <= 0;
   CS <= INIT;
+  blocksproduced <= 0;
   end
   
   else begin
    CS <= NS;
-  if(serial_enable) begin
-    blocksproduced <= blocksproduced + 1;
+  if(blockready == 1) begin
+   // blocksproduced <= blocksproduced + 1;
    
  end
  end
@@ -82,10 +85,15 @@ States CS,NS;
 
 
 //State logic for stepping through the block funtions actions
-always_comb begin
+always_latch begin
 
 //default assignment to avoid latching
 NS = CS;
+if (blockready == 1) begin
+
+blocksproduced = blocksproduced + 1;
+
+end
 
 case (CS) 
  INIT: begin
@@ -123,7 +131,8 @@ endcase
 
 end
 
-PerformQround Qround(.chachamatrixIN(chachatoQround), .clk(clk), .setRounds(Setrounds), .chachamatrixOUT(MatrixOut), .blocksproduced(blocksproduced), .blockready(blockready) );
+PerformQround Qround(.chachamatrixIN(chachatoQround), .clk(clk), .setRounds(Setrounds), .chachamatrixOUT(MatrixOut), .blockready(blockready) );
 ChaChaState state(.clk(clk), .clrMatrix(clrMatrix) ,.Block(Block), .Key(Key) ,.Nonce(Nonce),.Constant(Constant), .chachatoQround(chachatoQround));
+Block_Counter BC (.clk(clk),.init(rst),.Block(Block),.blocksproduced(blocksproduced),.blockready(blockready));
 endmodule
 

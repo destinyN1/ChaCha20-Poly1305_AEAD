@@ -28,8 +28,8 @@ module PerformQround
     input  logic  clk, setRounds, 
     output word_t chachamatrixOUT[3:0][3:0],
     
-    output logic blockready,
-    output logic [3:0] blocksproduced // can change this to a paramaterised type at some point to speciufy how many blocks are expected to be produced
+    output logic blockready
+   // output logic [31:0] blocksproduced // can change this to a paramaterised type at some point to speciufy how many blocks are expected to be produced
 );
     //intermediate value held for calculations and initial value held for adding at the end
     word_t INITchachastate [3:0][3:0];
@@ -52,8 +52,8 @@ module PerformQround
     Qround CurrQ, NextQ;
     
     typedef enum {IDLE,S0, S1, S2, S3, S4, S5, S6, S7,S8,S9,S10,S11,S12} stepper;
-    stepper Currstep, Nextstep;
-    
+        stepper Currstep, Nextstep;
+
     int counter;
     
     //STEP state shifter
@@ -66,7 +66,7 @@ module PerformQround
             counter <= 0;
             TEMPchachastateQ4Q7 <= '{default:0};
             loadvalues <= 1; // need to keep this value high while loading the matrix 
-          
+             
         end  
         else begin      
             Currstep <= Nextstep;
@@ -79,7 +79,6 @@ module PerformQround
             end
             else if((counter == 9) && ((Currstep == S12) && (CurrQ == Q7))) begin
                 counter <= 0;
-                blocksproduced = blocksproduced + 1;
             end
         end 
     end

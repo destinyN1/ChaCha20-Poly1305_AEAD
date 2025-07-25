@@ -26,15 +26,18 @@ module Block_Counter
 (
 input logic clk, init,
 input logic [31:0] blocksproduced,
-output  word_t Block
+output  word_t Block,
+
+input logic blockready
 
 
 
     );
-    
+   
    logic overflowflag; 
    word_t blocksproduced_prev;
-    
+   logic change;
+   logic blockready_prev;
     
  always_ff @(posedge clk) begin
  
@@ -43,18 +46,20 @@ output  word_t Block
    Block <= '{default:0};
    overflowflag <= 0;
    blocksproduced_prev <= blocksproduced;
+   blockready_prev <= 0;
+   
    end
    
   else begin
-
+    blockready_prev <= blockready;
 //check for overflow  
    if (Block == (32'hFFFFFFFF )) begin
         overflowflag <= 1'b1;
         Block <= '{default:0};
     end 
     
-    
-   else if (blocksproduced != blocksproduced_prev) begin
+    //check to see if the block ready is 0 
+   else if (blockready && !blockready_prev) begin
   
 //  //only increment the block counter if the the blocksproduced value has changed 
     
@@ -64,9 +69,12 @@ output  word_t Block
    blocksproduced_prev <= blocksproduced;
  
    end
+   else begin
    
-   if (blocksproduced == blocksproduced_prev) begin
+    
     Block <= Block;
+    
+    
    
    
    end
