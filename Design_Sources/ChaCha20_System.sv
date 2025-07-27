@@ -38,7 +38,6 @@ input logic clk, rst,
     );
     
     //appropriate block counter signals, need to keep track of the block itself, how many blocks and if a block is ready to be outputed
-    word_t Block;
     logic [31:0] blocksproduced;
     logic blockready;
     
@@ -49,6 +48,7 @@ input logic clk, rst,
     word_t SerialOut;
     logic  validS;
     logic load_enable;
+    
     
     
     // XOR SIGNALS
@@ -63,6 +63,9 @@ input logic clk, rst,
     //C signals
     logic [DATA_SIZE-1:0] input_data_split;
     logic [DATA_SIZE-1:0]    concatout [0:NO_REG-1];
+    logic full;
+    
+    
     
     
     //Plain Text signals
@@ -71,12 +74,16 @@ input logic clk, rst,
     logic [7:0] char_in_PT;
 ;
     
- Block_Function Block_Function (.serial_enable(load_enable),.clk(clk), .rst(rst), .Key(Key), .Nonce(Nonce), .Constant(Constant), .Block(Block), .MatrixOut(MatrixOutBF), .blocksproduced(blocksproduced));   
- Block_Counter Block_Counter (.clk(clk), .init(rst) , .blocksproduced(blocksproduced), . Block(Block));
- Serialiser Serialiser (.clk(clk),.rst(rst), .indata(MatrixOutBF),.validS(validS),.outdata(SerialOut),.load_enable(load_enable)); 
- XOR_module Xor_Module (.clk(clk), .XOR_READY(XOR_READY),.char_in(char_out),.Ciphertext(Ciphertext),.concatout(concatout));  
- Concatenator Concatenator (.clk(clk), .rst(rst),.input_data_split(SerialOut),.concatout(concatout) );
- Plain_Text Plain_Text (.rst(rst),.clk(clk), .XOR_READY(XOR_READY),.char_out(char_out),.char_in_PT(char_in_PT));
+// Block_Function Block_Function (.serial_enable(load_enable),.clk(clk), .rst(rst), .Key(Key), .Nonce(Nonce), .Constant(Constant), .MatrixOut(MatrixOutBF));   
+// Block_Counter Block_Counter (.clk(clk), .init(rst) , .blocksproduced(blocksproduced), . Block(Block));
+// Serialiser Serialiser (.clk(clk),.rst(rst), .indata(MatrixOutBF),.validS(validS),.outdata(SerialOut),.load_enable(load_enable)); 
+// XOR_module Xor_Module (.clk(clk), .XOR_READY(XOR_READY),.char_in(char_out),.Ciphertext(Ciphertext),.concatout(concatout));  
+// Concatenator Concatenator (.clk(clk), .rst(rst),.input_data_split(SerialOut),.concatout(concatout) );
+ //Plain_Text Plain_Text (.rst(rst),.clk(clk), .XOR_READY(XOR_READY),.char_out(char_out),.char_in_PT(char_in_PT));
+
+
+ Block_Function Block_Function (.blockready(blockready),.clk(clk), .rst(rst), .Key(Key), .Nonce(Nonce), .Constant(Constant), .MatrixOut(MatrixOutBF));   
     
+ Concat_Serialiser_TOP ConcatSer (.clk(clk),.rst(rst),.indata(MatrixOutBF),.load_en(blockready),.concatout(concatout),.full(full));
      
 endmodule

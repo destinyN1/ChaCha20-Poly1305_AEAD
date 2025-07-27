@@ -1,5 +1,10 @@
 `timescale 1ns / 1ps
 
+
+
+
+
+//DEPRECATED TESTBENCH FOR BLOCK FUNCTION TESTBENCH
 module Block_Function_TB();
 
     // Assuming word_t is 32-bit (typical for ChaCha)

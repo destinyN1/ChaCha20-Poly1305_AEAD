@@ -36,10 +36,12 @@ input logic rst, clk,
    
    
    //leaves block function and gets seiralized (serializer module)
-   output word_t MatrixOut [3:0][3:0],
+   output word_t MatrixOutBF [3:0][3:0],
    
    
-   output  logic serial_enable
+  // output  logic serial_enable
+   output logic blockready
+
    
    
 
@@ -55,11 +57,10 @@ States CS,NS;
  
  logic [31:0] blocksproduced;
  
- logic blockready;
  
  word_t Block;
  
- logic [31:0] blocksproduced;
+ //logic [31:0] blocksproduced;
  
  
  
@@ -114,12 +115,12 @@ end
  Setrounds = 0;
  
   if (blockready == 1) begin
-    serial_enable = 1;
+   // serial_enable = 1;
     NS = INIT;
   end
   
   else begin
-    serial_enable = 0;
+   // serial_enable = 0;
     NS = SETLOW;
     
  
@@ -131,7 +132,7 @@ endcase
 
 end
 
-PerformQround Qround(.chachamatrixIN(chachatoQround), .clk(clk), .setRounds(Setrounds), .chachamatrixOUT(MatrixOut), .blockready(blockready) );
+PerformQround Qround(.chachamatrixIN(chachatoQround), .clk(clk), .setRounds(Setrounds), .chachamatrixOUT(MatrixOutBF), .blockready(blockready) );
 ChaChaState state(.clk(clk), .clrMatrix(clrMatrix) ,.Block(Block), .Key(Key) ,.Nonce(Nonce),.Constant(Constant), .chachatoQround(chachatoQround));
 Block_Counter BC (.clk(clk),.init(rst),.Block(Block),.blocksproduced(blocksproduced),.blockready(blockready));
 endmodule
