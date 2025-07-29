@@ -44,7 +44,7 @@ module Serialiser(
        
     // Counter and address generation
     always_ff @(posedge clk) begin
-        if(rst) begin
+        if(rst || full) begin
             counter <= 4'b0;
             data_reg <= '{default:0};
             validS <= 0;
@@ -54,6 +54,7 @@ module Serialiser(
             end                                    // RST NEED TO BE LOW FOR COUNTER TO START INCREMENTING
         else if(load_enable) begin
             data_reg <= indata;
+            counter <= 4'b0;
             byte_index <= 0;
             concat_en <= 1;
            

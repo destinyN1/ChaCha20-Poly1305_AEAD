@@ -135,12 +135,19 @@ concatout[i] = '0;
 end
 end
 end
-        
+
+
+
+//function which will allow us to check in the storage array is full to make less assertions of full when running processor
+
+
+
+
 
 always_latch begin 
    
            
-if (!(write_addr <= NO_REG -1)) begin
+if (!(write_addr <= NO_REG -1) ) begin
 
 full = 1;
 
