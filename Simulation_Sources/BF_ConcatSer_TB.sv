@@ -63,17 +63,20 @@ initial begin
                 
                 
      task compare_output_with_S_Reg();
+     
      logic match;
      int matchcounter;
      matchcounter = 0;
      match = 1'b1;
+     
         begin
          for (int i = 0; i < 4; i++) begin
                 for (int j = 0; j < 4; j++) begin
                 
                 if (output_matrix[i][j] ==  dut.ConcatSer.S.data_reg[i][j]) begin
                 matchcounter = matchcounter + 1;
-               $display(" values %d output and data reg match", matchcounter);
+               $display(" values %d output and data reg match \n ", matchcounter);
+               $display("%08h %08h" , output_matrix[i][j],dut.ConcatSer.S.data_reg[i][j]);
   
                 
                 end
@@ -86,17 +89,9 @@ initial begin
                 else begin
                 
                 match = 1'b0; 
-               $display("Output Matrix and S data reg dont match");
-
-                
-                
-                
-
-                
+               $display("Output Matrix and S data reg dont match");               
                 end
-                end
-                
-          
+                end       
      endtask
     
       task run_pattern_test();
@@ -129,16 +124,28 @@ initial begin
             Nonce[2] = {8{pattern[3:0]}};
             
             #20;
-            print_input_qround_matrix();
-            wait(dut.blockready == 1);
-            print_final_matrix();
-            
-            test_count = test_count + 1;
+           
+           evaluate();
             
         end
     end
 endtask
     
+     task evaluate();
+   
+     begin
+    
+    print_input_qround_matrix();
+        
+        wait(dut.blockready == 1);
+        wait(dut.Block_Function.Qround.setRounds == 1);
+        capture_output_matrix();
+        compare_output_with_S_Reg();  
+     
+     
+     
+    end    
+     endtask
     
     task run_random_test();
     begin
@@ -169,12 +176,7 @@ endtask
         
         #20;
         
-        print_input_qround_matrix();
-        
-        wait(dut.blockready == 1);
-        wait(dut.Block_Function.Qround.setRounds == 1);
-        capture_output_matrix();
-        compare_output_with_S_Reg();
+     evaluate();
         
 
         //print_final_matrix();
@@ -257,22 +259,35 @@ endtask
 //        #10;
 //        rst = 0;
         
-        $display("=== Test Case 2:11000 random matrices ===");
+//        $display("=== Test Case 2:11000 random matrices ===");
 
         
+//        test_count = 0;
+        
+//        while(test_count < 20) begin
+        
+//        $display("TEST NO.%0d", test_count);
+         
+//        run_random_test();
+//        #20;
+//        test_count = test_count + 1;
+        
+        
+        
+//    end
+//    wait (blockready == 1);
+    
+//    #20;
+//    rst = 1;
+//    #20;
+//    rst = 0;
+
+        
+    
+           $display("=== Test Case 3: Pattern Tests ===");
         test_count = 0;
         
-        while(test_count < 7000) begin
-        
-        $display("TEST NO.%0d", test_count);
-         
-        run_random_test();
-        #20;
-        test_count = test_count + 1;
-        
-        
-    end
-    
+        run_pattern_test();
     
 $finish;
 
